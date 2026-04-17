@@ -1,10 +1,20 @@
 'use client'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 export default function Hero() {
   return (
     <section className="relative h-[70vh] min-h-[500px] w-full overflow-hidden">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1600')] bg-cover bg-center">
+      <div className="absolute inset-0">
+        <Image
+          src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1600"
+          alt="Luxury furniture showroom"
+          fill
+          priority
+          fetchPriority="high"
+          sizes="100vw"
+          className="object-cover"
+        />
         <div className="absolute inset-0 bg-black/40" />
       </div>
       <div className="relative h-full flex items-center justify-center text-center">

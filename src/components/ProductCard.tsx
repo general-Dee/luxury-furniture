@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useCartStore } from '@/store/cartStore'
+import { useState } from 'react'
 
 interface Product {
   id: string
@@ -14,8 +15,9 @@ interface Product {
   categories?: { name: string; slug: string }
 }
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const addToCart = useCartStore((state) => state.addItem)
+  const [imgSrc, setImgSrc] = useState(product.images[0] || '/placeholder.jpg')
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -29,6 +31,10 @@ export default function ProductCard({ product }: { product: Product }) {
     })
   }
 
+  const handleImageError = () => {
+    setImgSrc('/placeholder.jpg')
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -40,10 +46,13 @@ export default function ProductCard({ product }: { product: Product }) {
       <Link href={`/product/${product.slug}`}>
         <div className="relative h-80 w-full overflow-hidden bg-gray-100">
           <Image
-            src={product.images[0] || '/placeholder.jpg'}
+            src={imgSrc}
             alt={product.name}
             fill
+            priority={priority}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover group-hover:scale-105 transition-transform duration-700"
+            onError={handleImageError}
           />
           {product.categories && (
             <span className="absolute top-4 left-4 bg-white/80 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-full text-luxury-charcoal">

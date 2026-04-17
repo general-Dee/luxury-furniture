@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import ProductCard from '@/components/ProductCard'
-import CategoryNav from '@/components/CategoryNav'
 import Hero from '@/components/Hero'
+import CategoryNav from '@/components/CategoryNav'   // ← normal import, no dynamic
 
 export default async function Home({
   searchParams,
@@ -14,7 +14,6 @@ export default async function Home({
   let query = supabase.from('products').select('*, categories(name, slug)')
 
   if (category && category !== 'all') {
-    // First get category id
     const { data: catData } = await supabase
       .from('categories')
       .select('id')
@@ -36,7 +35,9 @@ export default async function Home({
           {products?.length === 0 ? (
             <p className="col-span-full text-center text-gray-500 py-12">No products found.</p>
           ) : (
-            products?.map((product) => <ProductCard key={product.id} product={product} />)
+            products?.map((product, index) => (
+              <ProductCard key={product.id} product={product} priority={index < 4} />
+            ))
           )}
         </div>
       </div>
