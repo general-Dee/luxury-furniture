@@ -16,10 +16,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans bg-luxury-cream`}>
         <CartProvider>
           <Navbar />
-          <main className="min-h-screen pt-20">   {/* pt-20 prevents content from hiding under fixed navbar */}
+          <main className="min-h-screen pt-20">
             <Suspense fallback={<div className="h-screen flex items-center justify-center">Loading...</div>}>
               {children}
             </Suspense>

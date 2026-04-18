@@ -39,12 +39,21 @@ export default function Navbar() {
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-luxury-gold transition-all duration-300 group-hover:w-full" />
           </Link>
 
-          {/* Right side: Cart + UserMenu */}
-          <div className="flex items-center gap-6 md:gap-8">
-            {/* Cart Icon with subtle hover */}
+          {/* Right side: Blog, Cart, UserMenu */}
+          <div className="flex items-center gap-4 md:gap-6">
+            {/* Blog Link */}
+            <Link
+              href="/blog"
+              className="hidden sm:inline-block text-gray-600 hover:text-luxury-gold transition-colors duration-200"
+            >
+              Blog
+            </Link>
+
+            {/* Cart Icon */}
             <Link
               href="/cart"
-              className="relative text-gray-600 hover:text-luxury-gold transition-colors duration-200 group"
+              className="relative p-2 -m-2 text-gray-600 hover:text-luxury-gold transition-colors duration-200 group"
+              aria-label="Shopping cart"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -60,10 +69,8 @@ export default function Navbar() {
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 21v-6"
                 />
               </svg>
-              {/* Optional badge for cart count – you can add later */}
             </Link>
 
-            {/* User Menu (already elegant) */}
             <UserMenu />
           </div>
         </div>
