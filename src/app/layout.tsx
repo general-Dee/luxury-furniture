@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { CartProvider } from '@/components/CartProvider'
 import Navbar from '@/components/Navbar'
+import NewsletterSignup from '@/components/NewsletterSignup'
 import { Suspense } from 'react'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -28,7 +29,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
             </Suspense>
           </main>
-          <footer className="bg-luxury-charcoal text-white py-12 mt-20">
+          {/* Global Newsletter Section */}
+          <div className="container-luxury py-16">
+            <div className="max-w-2xl mx-auto">
+              <NewsletterSignup />
+            </div>
+          </div>
+          <footer className="bg-luxury-charcoal text-white py-12">
             <div className="container-luxury text-center">
               <p className="text-sm">&copy; {new Date().getFullYear()} Luxury Furniture Nigeria. Timeless elegance for your home.</p>
             </div>
