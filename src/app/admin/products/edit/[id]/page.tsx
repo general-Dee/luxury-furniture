@@ -1,7 +1,7 @@
 ﻿import { createClient } from '@/utils/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
+import ImageUploadWrapper from '@/components/ImageUploadWrapper' // we'll create a client wrapper
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -24,7 +24,8 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
     const description = formData.get('description') as string
     const price = parseFloat(formData.get('price') as string)
     const stock = parseInt(formData.get('stock') as string)
-    const images = (formData.get('images') as string).split(',').map(s => s.trim()).filter(Boolean)
+    const imagesJson = formData.get('images') as string
+    const images = imagesJson ? JSON.parse(imagesJson) : []
     const categoryId = formData.get('categoryId') as string || null
 
     const { error } = await supabase
@@ -63,16 +64,8 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Images (comma-separated URLs)</label>
-          <input type="text" name="images" defaultValue={product.images?.join(', ') || ''} className="w-full border rounded-md px-3 py-2" />
-          {product.images?.[0] && (
-            <div className="mt-2">
-              <p className="text-xs text-gray-500 mb-1">Preview:</p>
-              <div className="relative w-32 h-32 rounded border overflow-hidden bg-gray-50">
-                <Image src={product.images[0]} alt="Preview" fill className="object-cover" unoptimized />
-              </div>
-            </div>
-          )}
+          <label className="block text-sm font-medium mb-1">Images</label>
+          <ImageUploadWrapper initialImages={product.images || []} />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Category</label>
