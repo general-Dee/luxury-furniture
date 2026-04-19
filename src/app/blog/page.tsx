@@ -1,8 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
-import NewsletterSignup from '@/components/NewsletterSignup'
-import RecentPosts from '@/components/RecentPosts'
+import RecentPosts from '@/components/RecentPosts'  // remove NewsletterSignup import
 
 function formatDate(dateString: string) {
   const date = new Date(dateString)
@@ -54,9 +53,8 @@ export default async function BlogPage() {
           ))}
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-8">
-          <NewsletterSignup />
+        {/* Sidebar – only Recent Posts */}
+        <div>
           <RecentPosts />
         </div>
       </div>

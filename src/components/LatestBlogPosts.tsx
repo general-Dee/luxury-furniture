@@ -16,9 +16,7 @@ export default async function LatestBlogPosts() {
     .order('published_at', { ascending: false })
     .limit(3)
 
-  if (!posts || posts.length === 0) {
-    return null
-  }
+  if (!posts || posts.length === 0) return null
 
   return (
     <section className="mt-20">
@@ -36,6 +34,7 @@ export default async function LatestBlogPosts() {
                     src={post.featured_image}
                     alt={post.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>

@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { useCartStore } from '@/store/cartStore'
 import { useState } from 'react'
 
+const FALLBACK_IMAGE = 'https://placehold.co/600x400?text=Luxury+Furniture'
+
 interface Product {
   id: string
   name: string
@@ -17,7 +19,7 @@ interface Product {
 
 export default function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const addToCart = useCartStore((state) => state.addItem)
-  const [imgSrc, setImgSrc] = useState(product.images[0] || '/placeholder.jpg')
+  const [imgSrc, setImgSrc] = useState(product.images[0] || FALLBACK_IMAGE)
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -27,12 +29,12 @@ export default function ProductCard({ product, priority = false }: { product: Pr
       name: product.name,
       price: product.price,
       quantity: 1,
-      image: product.images[0] || '/placeholder.jpg',
+      image: product.images[0] || FALLBACK_IMAGE,
     })
   }
 
   const handleImageError = () => {
-    setImgSrc('/placeholder.jpg')
+    setImgSrc(FALLBACK_IMAGE)
   }
 
   return (

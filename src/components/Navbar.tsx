@@ -26,11 +26,11 @@ export default function Navbar() {
           : 'bg-white/80 backdrop-blur-sm border-b border-gray-100/50'
       }`}
     >
-      <nav className="container-luxury">
-        <div className="flex justify-between items-center h-20">
+      <div className="container-luxury">
+        <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="group relative">
-            <span className="text-2xl md:text-3xl font-serif tracking-tight">
+          <Link href="/" className="group relative z-10">
+            <span className="text-xl md:text-2xl font-serif tracking-tight">
               <span className="text-luxury-charcoal">Luxury</span>
               <span className="text-luxury-gold transition-all duration-300 group-hover:tracking-wider">
                 Furniture
@@ -41,23 +41,21 @@ export default function Navbar() {
 
           {/* Right side: Blog, Cart, UserMenu */}
           <div className="flex items-center gap-4 md:gap-6">
-            {/* Blog Link */}
             <Link
               href="/blog"
-              className="hidden sm:inline-block text-gray-600 hover:text-luxury-gold transition-colors duration-200"
+              className="hidden md:inline-block text-gray-600 hover:text-luxury-gold transition-colors duration-200 text-sm font-medium leading-none"
             >
               Blog
             </Link>
 
-            {/* Cart Icon */}
             <Link
               href="/cart"
-              className="relative p-2 -m-2 text-gray-600 hover:text-luxury-gold transition-colors duration-200 group"
+              className="relative text-gray-600 hover:text-luxury-gold transition-colors duration-200 group"
               aria-label="Shopping cart"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 transition-transform duration-200 group-hover:scale-110"
+                className="h-5 w-5 transition-transform duration-200 group-hover:scale-110"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -74,7 +72,7 @@ export default function Navbar() {
             <UserMenu />
           </div>
         </div>
-      </nav>
+      </div>
     </motion.header>
   )
 }
