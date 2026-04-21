@@ -24,11 +24,13 @@ export default function CategoryNav() {
 
   const handleCategoryClick = (slug: string) => {
     setActiveSlug(slug)
+    const params = new URLSearchParams(searchParams.toString())
     if (slug === 'all') {
-      router.push('/')
+      params.delete('category')
     } else {
-      router.push(`/?category=${slug}`)
+      params.set('category', slug)
     }
+    router.push(`/?${params.toString()}`)
   }
 
   return (

@@ -51,18 +51,20 @@ export default function CheckoutPage() {
   const onSubmit = async (data: CheckoutForm) => {
     setLoading(true)
 
-    // 1. Create order in Supabase
+    // Cast insert object to any to bypass TypeScript inference
+    const orderData: any = {
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+      city: data.city,
+      state: data.state,
+      total_amount: totalPrice,
+      status: 'pending',
+    }
+
     const { data: order, error } = await supabase
       .from('orders')
-      .insert({
-        email: data.email,
-        phone: data.phone,
-        address: data.address,
-        city: data.city,
-        state: data.state,
-        total_amount: totalPrice,
-        status: 'pending',
-      })
+      .insert(orderData)
       .select()
       .single()
 
@@ -72,32 +74,34 @@ export default function CheckoutPage() {
       return
     }
 
-    // 2. Create order items
+    // Cast order to any to access id
+    const orderId = (order as any).id
+
     const orderItems = items.map((item) => ({
-      order_id: order.id,
+      order_id: orderId,
       product_id: item.product_id,
       product_name: item.name,
       quantity: item.quantity,
       price: item.price,
       image: item.image,
     }))
-    await supabase.from('order_items').insert(orderItems)
 
-    // 3. Initialize Paystack payment
+    // Cast items to any
+    await supabase.from('order_items').insert(orderItems as any)
+
     const res = await fetch('/api/paystack/initialize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: data.email,
         amount: totalPrice,
-        orderId: order.id,
+        orderId,
         metadata: { cart_items: items },
       }),
     })
     const paystackData = await res.json()
 
     if (paystackData.authorization_url) {
-      // Clear cart after successful redirect? We'll clear after webhook confirmation.
       window.location.href = paystackData.authorization_url
     } else {
       alert('Payment initialization failed: ' + (paystackData.error || 'Unknown error'))

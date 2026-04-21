@@ -20,28 +20,26 @@ export default function VerifyPage() {
     }
 
     const verifyPayment = async () => {
-      // Poll the order status (or call a webhook endpoint)
-      // For simplicity, we check the database directly
       const { data: order, error } = await supabase
         .from('orders')
         .select('status')
         .eq('id', orderId)
         .single()
 
-      if (order?.status === 'paid') {
+      // Cast order to any to access status
+      const orderStatus = (order as any)?.status
+
+      if (orderStatus === 'paid') {
         setStatus('success')
-        // Clear local cart
         localStorage.removeItem('luxury-cart')
-        // Redirect to orders page after 3 seconds
         setTimeout(() => router.push('/orders'), 3000)
-      } else if (order?.status === 'pending') {
+      } else if (orderStatus === 'pending') {
         setStatus('pending')
       } else {
         setStatus('error')
       }
     }
 
-    // Check immediately, then every 2 seconds for a few times
     verifyPayment()
     const interval = setInterval(verifyPayment, 2000)
     setTimeout(() => clearInterval(interval), 10000)
