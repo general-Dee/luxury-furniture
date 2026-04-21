@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import ProductCard from '@/components/ProductCard'
 import Hero from '@/components/Hero'
 import CategoryNav from '@/components/CategoryNav'
@@ -10,33 +10,42 @@ const PRODUCTS_PER_PAGE = 12
 
 export default function Home() {
   const searchParams = useSearchParams()
-  const router = useRouter()
   const [products, setProducts] = useState<any[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchProducts = useCallback(async (pageNum: number, append = false) => {
     setLoading(true)
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('page', pageNum.toString())
-    params.set('limit', PRODUCTS_PER_PAGE.toString())
-    const res = await fetch(`/api/products?${params.toString()}`)
-    const data = await res.json()
-    if (append) {
-      setProducts(prev => [...prev, ...(data.products || [])])
-    } else {
-      setProducts(data.products || [])
+    setError(null)
+    try {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('page', pageNum.toString())
+      params.set('limit', PRODUCTS_PER_PAGE.toString())
+      const url = `/api/products?${params.toString()}`
+      const res = await fetch(url)
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      if (append) {
+        setProducts(prev => [...prev, ...(data.products || [])])
+      } else {
+        setProducts(data.products || [])
+      }
+      setHasMore(data.hasMore)
+    } catch (err: any) {
+      console.error('Fetch error:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+      setInitialLoading(false)
     }
-    setHasMore(data.hasMore)
-    setLoading(false)
   }, [searchParams])
 
   useEffect(() => {
-    // Reset when filters change
     setPage(1)
-    fetchProducts(1, false).finally(() => setInitialLoading(false))
+    fetchProducts(1, false)
   }, [searchParams, fetchProducts])
 
   const loadMore = () => {
@@ -45,9 +54,8 @@ export default function Home() {
     fetchProducts(nextPage, true)
   }
 
-  if (initialLoading) {
-    return <div className="container-luxury py-12 text-center">Loading...</div>
-  }
+  if (initialLoading) return <div className="container-luxury py-20 text-center">Loading products...</div>
+  if (error) return <div className="container-luxury py-20 text-center text-red-500">Error: {error}</div>
 
   return (
     <>
@@ -66,7 +74,7 @@ export default function Home() {
             ))
           )}
         </div>
-        {hasMore && (
+        {hasMore && products.length > 0 && (
           <div className="flex justify-center mt-12">
             <button
               onClick={loadMore}

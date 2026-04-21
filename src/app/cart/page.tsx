@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import { useCartStore } from '@/store/cartStore'
 import Link from 'next/link'
@@ -12,6 +11,9 @@ export default function CartPage() {
 
   useEffect(() => setMounted(true), [])
 
+  // Debug log
+  console.log('Cart page render – totalPrice:', totalPrice, 'items:', items)
+
   if (!mounted) {
     return <div className="container-luxury py-20 text-center">Loading cart...</div>
   }
@@ -19,19 +21,17 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="container-luxury py-20 text-center">
-        <div className="max-w-md mx-auto">
-          <h2 className="text-3xl font-serif mb-4">Your cart is empty</h2>
-          <p className="text-gray-500 mb-8">Add some luxury pieces to your cart.</p>
-          <Link href="/" className="btn-primary inline-block">Explore Collection</Link>
-        </div>
+        <h2 className="text-2xl font-serif mb-4">Your cart is empty</h2>
+        <p className="text-gray-600 mb-6">Add some luxury furniture to get started.</p>
+        <Link href="/" className="btn-primary inline-block">Continue Shopping</Link>
       </div>
     )
   }
 
   return (
     <main className="container-luxury py-12">
-      <h1 className="text-4xl font-serif mb-8 text-center">Shopping Cart</h1>
-      <div className="grid lg:grid-cols-3 gap-12">
+      <h1 className="text-3xl font-serif mb-8">Shopping Cart</h1>
+      <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
           <AnimatePresence>
             {items.map((item) => (
@@ -99,10 +99,7 @@ export default function CartPage() {
             <span>Total</span>
             <span>₦{totalPrice.toLocaleString()}</span>
           </div>
-          <Link
-            href="/checkout"
-            className="btn-primary w-full text-center mt-6 block"
-          >
+          <Link href="/checkout" className="btn-primary w-full text-center mt-6 block">
             Proceed to Checkout
           </Link>
           <button

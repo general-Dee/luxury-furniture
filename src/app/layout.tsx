@@ -5,6 +5,7 @@ import { CartProvider } from '@/components/CartProvider'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Suspense } from 'react'
+import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
@@ -14,9 +15,13 @@ export const metadata: Metadata = {
   description: 'Discover premium handcrafted furniture for the discerning Nigerian home.',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en"  className="scroll-smooth" data-scroll-behavior="smooth">
+    <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -31,6 +36,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </main>
           <Footer />
         </CartProvider>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 2500,
+            style: {
+              background: '#2C2C2C',
+              color: '#fff',
+              fontSize: '1rem',
+              padding: '12px 24px',
+              borderRadius: '8px',
+            },
+            success: {
+              iconTheme: { primary: '#C6A43F', secondary: '#2C2C2C' },
+            },
+          }}
+        />
       </body>
     </html>
   )

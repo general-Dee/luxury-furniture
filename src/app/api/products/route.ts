@@ -18,7 +18,8 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient()
   let query = supabase.from('products').select('*, categories(name, slug)', { count: 'exact' })
 
-  if (category && category !== 'all') {
+  // Apply filters only if they have meaningful values
+  if (category && category !== 'all' && category !== '') {
     // @ts-ignore
     const { data: catData } = await supabase
       .from('categories')
@@ -27,27 +28,37 @@ export async function GET(request: NextRequest) {
       .single()
     if (catData) query = query.eq('category_id', (catData as any).id)
   }
-  if (search && search.trim() !== '') query = query.ilike('name', `%${search}%`)
-  if (minPrice && !isNaN(parseFloat(minPrice))) query = query.gte('price', parseFloat(minPrice))
-  if (maxPrice && !isNaN(parseFloat(maxPrice))) query = query.lte('price', parseFloat(maxPrice))
-  if (inStock === 'true') query = query.gt('stock', 0)
-
-  switch (sort) {
-    case 'price_asc': query = query.order('price', { ascending: true }); break
-    case 'price_desc': query = query.order('price', { ascending: false }); break
-    default: query = query.order('created_at', { ascending: false })
+  if (search && search.trim() !== '') {
+    query = query.ilike('name', `%${search.trim()}%`)
   }
+  if (minPrice && !isNaN(parseFloat(minPrice))) {
+    query = query.gte('price', parseFloat(minPrice))
+  }
+  if (maxPrice && !isNaN(parseFloat(maxPrice))) {
+    query = query.lte('price', parseFloat(maxPrice))
+  }
+  if (inStock === 'true') {
+    query = query.gt('stock', 0)
+  }
+
+  // Sorting
+  if (sort === 'price_asc') query = query.order('price', { ascending: true })
+  else if (sort === 'price_desc') query = query.order('price', { ascending: false })
+  else query = query.order('created_at', { ascending: false })
 
   query = query.range(from, to)
 
   // @ts-ignore
   const { data, count, error } = await query
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) {
+    console.error('API products error:', error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
 
   return NextResponse.json({
-    products: data,
-    total: count,
+    products: data || [],
+    total: count || 0,
     page,
     hasMore: (page * limit) < (count || 0)
   })

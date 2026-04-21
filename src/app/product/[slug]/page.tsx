@@ -2,80 +2,68 @@ import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import AddToCartButton from '@/components/AddToCartButton'
-import { motion } from 'framer-motion'
-import type { Metadata } from 'next'
-import Script from 'next/script'
+import ReviewForm from '@/components/ReviewForm'
+import ProductReviews from '@/components/ProductReviews'
+import { Star } from 'lucide-react'
+import { Metadata } from 'next'
 
-// Generate dynamic metadata for SEO
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+type Props = {
+  params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
   const supabase = await createClient()
   const { data: product } = await supabase
     .from('products')
-    .select('name, description, images')
-    .eq('slug', params.slug)
+    .select('name, description')
+    .eq('slug', slug)
     .single()
-
   if (!product) return {}
-
   return {
     title: `${product.name} | Luxury Furniture Nigeria`,
-    description: product.description.slice(0, 160),
-    openGraph: {
-      title: product.name,
-      description: product.description.slice(0, 160),
-      images: [product.images[0] || '/placeholder.jpg'],
-      // 'product' type is not supported; omit or use 'website'
-    },
-    alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/product/${params.slug}`,
-    },
+    description: product.description?.slice(0, 160),
   }
 }
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
+export default async function ProductPage({ params }: Props) {
+  const { slug } = await params
   const supabase = await createClient()
-  const { data: product } = await supabase
+
+  // Fetch product
+  const { data: product, error } = await supabase
     .from('products')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single()
 
-  if (!product) notFound()
+  if (error || !product) notFound()
 
-  // Structured data for rich snippets
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    description: product.description,
-    image: product.images[0],
-    offers: {
-      '@type': 'Offer',
-      price: product.price,
-      priceCurrency: 'NGN',
-      availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/product/${product.slug}`,
-    },
-  }
+  // Fetch reviews with profiles (email)
+  const { data: reviewsData } = await supabase
+    .from('reviews')
+    .select('*, profiles!user_id(email)')
+    .eq('product_id', product.id)
+    .order('created_at', { ascending: false }) as any
+
+  const reviews = reviewsData || []
+  const avgRating = reviews.length
+    ? (reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    : null
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
 
   return (
-    <>
-      <Script
-        id="product-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-      <main className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-2 gap-12">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-4"
-          >
-            {product.images.map((img: string, idx: number) => (
+    <main className="max-w-7xl mx-auto px-4 py-12">
+      <div className="grid md:grid-cols-2 gap-12">
+        {/* Product Images */}
+        <div className="space-y-4">
+          {product.images && product.images.length > 0 ? (
+            product.images.map((img: string, idx: number) => (
               <div key={idx} className="relative h-96 w-full bg-gray-100 rounded-lg overflow-hidden">
                 <Image
-                  src={img || '/placeholder.jpg'}
+                  src={img}
                   alt={product.name}
                   fill
                   priority={idx === 0}
@@ -83,23 +71,45 @@ export default async function ProductPage({ params }: { params: { slug: string }
                   className="object-cover"
                 />
               </div>
-            ))}
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-6"
-          >
-            <h1 className="text-4xl font-serif text-gray-900">{product.name}</h1>
-            <p className="text-3xl font-bold text-luxury-gold">₦{product.price.toLocaleString()}</p>
-            <div className="prose prose-lg text-gray-600">{product.description}</div>
-            <div className="pt-4">
-              <AddToCartButton product={product} />
+            ))
+          ) : (
+            <div className="relative h-96 w-full bg-gray-100 rounded-lg flex items-center justify-center">
+              <span className="text-gray-400">No image available</span>
             </div>
-          </motion.div>
+          )}
         </div>
-      </main>
-    </>
+
+        {/* Product Details */}
+        <div className="space-y-6">
+          <h1 className="text-4xl font-serif text-gray-900">{product.name}</h1>
+          <p className="text-3xl font-bold text-luxury-gold">₦{product.price.toLocaleString()}</p>
+
+          {/* Average Rating */}
+          {avgRating && (
+            <div className="flex items-center gap-2">
+              <div className="flex">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className={`w-5 h-5 ${i < parseFloat(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                ))}
+              </div>
+              <span className="text-sm text-gray-600">{avgRating} out of 5 ({reviews.length} reviews)</span>
+            </div>
+          )}
+
+          <div className="prose prose-lg text-gray-600">{product.description}</div>
+          <div className="pt-4">
+            <AddToCartButton product={product} />
+          </div>
+        </div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className="mt-12">
+        {user && (
+          <ReviewForm productId={product.id} userId={user.id} onReviewSubmitted={() => {}} />
+        )}
+        <ProductReviews reviews={reviews} />
+      </div>
+    </main>
   )
 }

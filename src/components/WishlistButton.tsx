@@ -18,20 +18,26 @@ export default function WishlistButton({ productId, className = '' }: WishlistBu
 
   useEffect(() => {
     const checkWishlist = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          setLoading(false)
+          return
+        }
+        setUserId(user.id)
+        const { data } = await supabase
+          .from('wishlist')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('product_id', productId)
+          .maybeSingle()
+        setIsInWishlist(!!data)
+      } catch (err) {
+        // Ignore lock errors (non-critical)
+        console.warn('Wishlist check error:', err)
+      } finally {
         setLoading(false)
-        return
       }
-      setUserId(user.id)
-      const { data } = await supabase
-        .from('wishlist')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('product_id', productId)
-        .maybeSingle()
-      setIsInWishlist(!!data)
-      setLoading(false)
     }
     checkWishlist()
   }, [productId, supabase])
@@ -42,19 +48,22 @@ export default function WishlistButton({ productId, className = '' }: WishlistBu
       return
     }
 
-    if (isInWishlist) {
-      await supabase
-        .from('wishlist')
-        .delete()
-        .eq('user_id', userId)
-        .eq('product_id', productId)
-      setIsInWishlist(false)
-    } else {
-      // Cast insert object to any to bypass TypeScript inference
-      await supabase
-        .from('wishlist')
-        .insert({ user_id: userId, product_id: productId } as any)
-      setIsInWishlist(true)
+    try {
+      if (isInWishlist) {
+        await supabase
+          .from('wishlist')
+          .delete()
+          .eq('user_id', userId)
+          .eq('product_id', productId)
+        setIsInWishlist(false)
+      } else {
+        await supabase
+          .from('wishlist')
+          .insert({ user_id: userId, product_id: productId } as any)
+        setIsInWishlist(true)
+      }
+    } catch (err) {
+      console.error('Wishlist toggle error:', err)
     }
   }
 
