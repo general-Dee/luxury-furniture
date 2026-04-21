@@ -1,36 +1,21 @@
-'use client'
-import { useEffect, useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
-import { User } from '@supabase/supabase-js'
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
+import AddressManager from '@/components/AddressManager'
 
-export default function AccountPage() {
-  const [user, setUser] = useState<User | null>(null)
-  const supabase = createClient()
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-    }
-    getUser()
-  }, [])
-
-  if (!user) return <div className="text-center py-20">Loading...</div>
+export default async function AccountPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="container-luxury py-12 max-w-4xl mx-auto">
       <h1 className="text-3xl font-serif mb-8">My Account</h1>
-      <div className="bg-white shadow rounded-lg p-6">
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <p className="mt-1">{user.email}</p>
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">User ID</label>
-          <p className="mt-1 text-xs text-gray-500">{user.id}</p>
-        </div>
-        {/* You can add a form to update profile, change password, etc. */}
+      <div className="bg-white rounded-lg shadow p-6 mb-8">
+        <h2 className="text-xl font-semibold mb-2">Profile Info</h2>
+        <p>Email: {user.email}</p>
+        {/* Add name update later */}
       </div>
+      <AddressManager />
     </div>
   )
 }

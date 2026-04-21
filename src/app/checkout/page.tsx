@@ -20,14 +20,17 @@ type CheckoutForm = z.infer<typeof schema>
 
 export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false)
-  const { items, totalPrice, clearCart } = useCartStore()
+  const { items, totalPrice } = useCartStore()
   const [loading, setLoading] = useState(false)
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([])
+  const [selectedAddressId, setSelectedAddressId] = useState('')
   const router = useRouter()
   const supabase = createClient()
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<CheckoutForm>({
     resolver: zodResolver(schema),
@@ -35,10 +38,42 @@ export default function CheckoutPage() {
 
   useEffect(() => setMounted(true), [])
 
-  if (!mounted) {
-    return <div className="container-luxury py-20 text-center">Loading...</div>
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        // @ts-ignore
+        const { data } = await supabase
+          .from('addresses')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('is_default', { ascending: false })
+        setSavedAddresses(data || [])
+        const defaultAddr = (data || []).find((a: any) => a.is_default)
+        if (defaultAddr) {
+          setSelectedAddressId(defaultAddr.id)
+          setValue('phone', defaultAddr.phone)
+          setValue('address', defaultAddr.address)
+          setValue('city', defaultAddr.city)
+          setValue('state', defaultAddr.state)
+        }
+      }
+    }
+    fetchAddresses()
+  }, [supabase, setValue])
+
+  const handleAddressSelect = (id: string) => {
+    const addr = savedAddresses.find(a => a.id === id)
+    if (addr) {
+      setValue('phone', addr.phone)
+      setValue('address', addr.address)
+      setValue('city', addr.city)
+      setValue('state', addr.state)
+      setSelectedAddressId(id)
+    }
   }
 
+  if (!mounted) return <div className="container-luxury py-20 text-center">Loading...</div>
   if (items.length === 0) {
     return (
       <div className="container-luxury py-20 text-center">
@@ -51,7 +86,6 @@ export default function CheckoutPage() {
   const onSubmit = async (data: CheckoutForm) => {
     setLoading(true)
 
-    // Cast insert object to any to bypass TypeScript inference
     const orderData: any = {
       email: data.email,
       phone: data.phone,
@@ -62,6 +96,7 @@ export default function CheckoutPage() {
       status: 'pending',
     }
 
+    // @ts-ignore
     const { data: order, error } = await supabase
       .from('orders')
       .insert(orderData)
@@ -74,7 +109,6 @@ export default function CheckoutPage() {
       return
     }
 
-    // Cast order to any to access id
     const orderId = (order as any).id
 
     const orderItems = items.map((item) => ({
@@ -86,8 +120,8 @@ export default function CheckoutPage() {
       image: item.image,
     }))
 
-    // Cast items to any
-    await supabase.from('order_items').insert(orderItems as any)
+    // @ts-ignore
+    await supabase.from('order_items').insert(orderItems)
 
     const res = await fetch('/api/paystack/initialize', {
       method: 'POST',
@@ -115,6 +149,23 @@ export default function CheckoutPage() {
         <h1 className="text-4xl font-serif text-center mb-8">Checkout</h1>
         <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {savedAddresses.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Select saved address</label>
+                <select
+                  value={selectedAddressId}
+                  onChange={(e) => handleAddressSelect(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                >
+                  <option value="">-- Choose saved address --</option>
+                  {savedAddresses.map(addr => (
+                    <option key={addr.id} value={addr.id}>
+                      {addr.full_name} – {addr.address}, {addr.city}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
               <input
@@ -164,7 +215,6 @@ export default function CheckoutPage() {
                 {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
               </div>
             </div>
-
             <div className="border-t pt-4 mt-6">
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>

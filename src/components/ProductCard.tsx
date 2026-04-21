@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useCartStore } from '@/store/cartStore'
 import { useState } from 'react'
+import WishlistButton from './WishlistButton'
 
 const FALLBACK_IMAGE = 'https://placehold.co/600x400?text=Luxury+Furniture'
 
@@ -43,7 +44,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4 }}
       whileHover={{ y: -8 }}
-      className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300"
+      className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 relative"
     >
       <Link href={`/product/${product.slug}`}>
         <div className="relative h-80 w-full overflow-hidden bg-gray-100">
@@ -63,6 +64,9 @@ export default function ProductCard({ product, priority = false }: { product: Pr
           )}
         </div>
       </Link>
+      <div className="absolute top-2 right-2 z-10">
+        <WishlistButton productId={product.id} />
+      </div>
       <div className="p-5">
         <Link href={`/product/${product.slug}`}>
           <h3 className="text-xl font-serif text-gray-800 mb-2 hover:text-luxury-gold transition">
