@@ -4,6 +4,7 @@ import './globals.css'
 import { CartProvider } from '@/components/CartProvider'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { ThemeProvider } from '@/components/ThemeProvider'
 import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 
@@ -21,21 +22,23 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} font-sans bg-luxury-cream`}>
-        <CartProvider>
-          <Navbar />
-          <main className="min-h-screen pt-20">
-            <Suspense fallback={<div className="h-screen flex items-center justify-center">Loading...</div>}>
-              {children}
-            </Suspense>
-          </main>
-          <Footer />
-        </CartProvider>
+      <body className={`${inter.variable} ${playfair.variable} font-sans`}>
+        <ThemeProvider>
+          <CartProvider>
+            <Navbar />
+            <main className="min-h-screen pt-20">
+              <Suspense fallback={<div className="h-screen flex items-center justify-center">Loading...</div>}>
+                {children}
+              </Suspense>
+            </main>
+            <Footer />
+          </CartProvider>
+        </ThemeProvider>
         <Toaster
           position="top-center"
           toastOptions={{

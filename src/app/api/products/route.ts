@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
   const maxPrice = searchParams.get('maxPrice')
   const sort = searchParams.get('sort')
   const inStock = searchParams.get('inStock')
+  const sale = searchParams.get('sale')
 
   const from = (page - 1) * limit
   const to = from + limit - 1
@@ -18,7 +19,12 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient()
   let query = supabase.from('products').select('*, categories(name, slug)', { count: 'exact' })
 
-  // Apply filters only if they have meaningful values
+  // Sale filter
+  if (sale === 'true') {
+    query = query.eq('is_sale', true)
+  }
+
+  // Category filter
   if (category && category !== 'all' && category !== '') {
     // @ts-ignore
     const { data: catData } = await supabase
@@ -28,15 +34,21 @@ export async function GET(request: NextRequest) {
       .single()
     if (catData) query = query.eq('category_id', (catData as any).id)
   }
+
+  // Search filter
   if (search && search.trim() !== '') {
     query = query.ilike('name', `%${search.trim()}%`)
   }
+
+  // Price range
   if (minPrice && !isNaN(parseFloat(minPrice))) {
     query = query.gte('price', parseFloat(minPrice))
   }
   if (maxPrice && !isNaN(parseFloat(maxPrice))) {
     query = query.lte('price', parseFloat(maxPrice))
   }
+
+  // Stock filter
   if (inStock === 'true') {
     query = query.gt('stock', 0)
   }

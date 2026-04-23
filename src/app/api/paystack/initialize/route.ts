@@ -6,7 +6,6 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient()
     const { email, amount, orderId, metadata } = await req.json()
 
-    // Validate required fields
     if (!email || !amount || !orderId) {
       return NextResponse.json(
         { error: 'Missing required fields: email, amount, or orderId' },
@@ -14,19 +13,20 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Get current user if logged in (optional)
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Initialize payment with Paystack
+    // TEMPORARY: Hardcoded test secret key (remove after testing)
+    const PAYSTACK_SECRET_KEY = 'sk_test_993ded882c7d7ade838596211d5e13b5209d1b60'
+
     const response = await fetch('https://api.paystack.co/transaction/initialize', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         email,
-        amount: Math.round(amount * 100), // Convert to kobo and ensure integer
+        amount: Math.round(amount * 100),
         callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/verify?order_id=${orderId}`,
         metadata: {
           ...metadata,
@@ -46,7 +46,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Update order with Paystack reference
     const { error: updateError } = await supabase
       .from('orders')
       .update({
@@ -57,7 +56,6 @@ export async function POST(req: NextRequest) {
 
     if (updateError) {
       console.error('Failed to update order with Paystack reference:', updateError)
-      // Still return the authorization URL – the order can be updated later
     }
 
     return NextResponse.json({

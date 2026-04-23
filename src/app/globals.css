@@ -3,27 +3,53 @@
 @tailwind utilities;
 
 @layer base {
+  /* Light mode (default) */
+  :root {
+    --bg-primary: #FDFBF7;
+    --bg-secondary: #ffffff;
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --border-light: #e5e7eb;
+    --card-bg: #ffffff;
+  }
+
+  /* Dark mode */
+  .dark {
+    --bg-primary: #111827;
+    --bg-secondary: #1f2937;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --border-light: #374151;
+    --card-bg: #1f2937;
+  }
+
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-[#FDFBF7] text-gray-800 antialiased;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif tracking-tight;
   }
 
-  /* Custom scrollbar */
+  /* Custom scrollbar – slightly darker in dark mode */
   ::-webkit-scrollbar {
     width: 8px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100;
+    background-color: #e5e7eb;
+  }
+  .dark ::-webkit-scrollbar-track {
+    background-color: #374151;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-[#C6A43F] rounded-full;
+    background-color: #C6A43F;
+    border-radius: 9999px;
   }
 }
 
@@ -45,68 +71,7 @@
   }
 }
 
-/* ========== Kit Newsletter Form Styling (plain CSS – no @apply warnings) ========== */
-[data-uid="55f59cd259"] form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  width: 100%;
-}
-
-[data-uid="55f59cd259"] input {
-  width: 100%;
-  padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  outline: none;
-  transition: all 0.2s;
-  background-color: white;
-}
-
-[data-uid="55f59cd259"] input:focus {
-  border-color: #C6A43F;
-  box-shadow: 0 0 0 2px rgba(198, 164, 63, 0.2);
-}
-
-[data-uid="55f59cd259"] button {
-  width: 100%;
-  background-color: #2C2C2C;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-[data-uid="55f59cd259"] button:hover {
-  background-color: #C6A43F;
-  color: #2C2C2C;
-}
-
-[data-uid="55f59cd259"] .formkit-alert {
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-  text-align: center;
-}
-
-[data-uid="55f59cd259"] .formkit-alert-success {
-  color: #16a34a;
-}
-
-[data-uid="55f59cd259"] .formkit-alert-error {
-  color: #ef4444;
-}
-
-/* ========== Kit Newsletter Form – Style Overrides ========== */
-/* Prevent Kit CSS from affecting the rest of your layout */
-[data-uid="55f59cd259"],
-[data-uid="55f59cd259"] * {
-  all: revert;  /* resets Kit's injected styles to browser defaults */
-  box-sizing: border-box;
-}
-
-/* Re‑apply your desired styling inside the form */
+/* ========== Kit Newsletter Form Styling ========== */
 [data-uid="55f59cd259"] form {
   display: flex;
   flex-direction: column;
@@ -119,10 +84,11 @@
 [data-uid="55f59cd259"] input {
   width: 100%;
   padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-light);
   border-radius: 0.375rem;
   outline: none;
-  background: white;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
   font-family: inherit;
 }
 

@@ -26,7 +26,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    console.log('🛒 Adding to cart:', product.name)   // <-- debug log
+    console.log('🛒 Adding to cart:', product.name)
     addToCart({
       id: product.id,
       product_id: product.id,
@@ -59,10 +59,10 @@ export default function ProductCard({ product, priority = false }: { product: Pr
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4 }}
       whileHover={{ y: -8 }}
-      className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 relative"
+      className="group bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 relative"
     >
       <Link href={`/product/${product.slug}`}>
-        <div className="relative h-80 w-full overflow-hidden bg-gray-100">
+        <div className="relative h-80 w-full overflow-hidden bg-gray-100 dark:bg-gray-700">
           <Image
             src={imgSrc}
             alt={product.name}
@@ -73,7 +73,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
             onError={handleImageError}
           />
           {product.categories && (
-            <span className="absolute top-4 left-4 bg-white/80 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-full text-luxury-charcoal">
+            <span className="absolute top-4 left-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-full text-luxury-charcoal dark:text-gray-200">
               {product.categories.name}
             </span>
           )}
@@ -84,11 +84,11 @@ export default function ProductCard({ product, priority = false }: { product: Pr
       </div>
       <div className="p-5">
         <Link href={`/product/${product.slug}`}>
-          <h3 className="text-xl font-serif text-gray-800 mb-2 hover:text-luxury-gold transition">
+          <h3 className="text-xl font-serif text-gray-800 dark:text-gray-100 mb-2 hover:text-luxury-gold transition">
             {product.name}
           </h3>
         </Link>
-        <p className="text-gray-500 text-sm mb-3 line-clamp-2">{product.description}</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-3 line-clamp-2">{product.description}</p>
         <div className="flex justify-between items-center mt-4">
           <span className="text-2xl font-bold text-luxury-gold">
             ₦{product.price.toLocaleString()}
