@@ -1,59 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
-import crypto from 'crypto'
+import { NextResponse } from 'next/server'
+import { markOrderPaid } from '@/lib/orders'
+import { verifyPaystackSignature } from '@/lib/paystack'
 
-export async function POST(req: NextRequest) {
-  try {
-    // Verify Paystack signature
-    const signature = req.headers.get('x-paystack-signature')
-    const body = await req.text()
+export async function POST(request: Request) {
+  const signature = request.headers.get('x-paystack-signature')
 
-    if (!signature) {
-      return NextResponse.json({ error: 'Missing signature' }, { status: 401 })
-    }
+  // Must read the raw body — HMAC verification needs the exact bytes Paystack signed.
+  const rawBody = await request.text()
 
-    const hash = crypto
-      .createHmac('sha512', process.env.PAYSTACK_SECRET_KEY!)
-      .update(body)
-      .digest('hex')
-
-    if (signature !== hash) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
-    }
-
-    const event = JSON.parse(body)
-    const supabase = await createClient()
-
-    // Handle successful charge event
-    if (event.event === 'charge.success') {
-      const reference = event.data.reference
-      const orderId = event.data.metadata?.order_id
-
-      if (!orderId) {
-        console.error('Webhook missing order_id in metadata')
-        return NextResponse.json({ error: 'Missing order_id' }, { status: 400 })
-      }
-
-      // Update order status to 'paid'
-      const { error: updateError } = await supabase
-        .from('orders')
-        .update({ status: 'paid' })
-        .eq('id', orderId)
-        .eq('paystack_reference', reference)
-
-      if (updateError) {
-        console.error('Failed to update order status:', updateError)
-        return NextResponse.json({ error: 'Database update failed' }, { status: 500 })
-      }
-
-      // Optional: Reduce product stock, clear cart, send email, etc.
-      // You can add logic here for inventory management
-    }
-
-    // Always return 200 to acknowledge receipt
-    return NextResponse.json({ received: true })
-  } catch (error) {
-    console.error('Webhook error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  if (!verifyPaystackSignature(rawBody, signature, process.env.PAYSTACK_SECRET_KEY)) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }
+
+  const event = JSON.parse(rawBody)
+
+  if (event.event === 'charge.success') {
+    const reference: string | undefined = event.data?.reference
+    if (reference) {
+      try {
+        await markOrderPaid(reference)
+      } catch (error) {
+        console.error('Failed to process Paystack webhook:', error)
+        // Still ack with 200 below — Paystack will retry on non-2xx, and
+        // whatever failed here isn't likely to succeed on a blind retry.
+      }
+    }
+  }
+
+  return NextResponse.json({ received: true })
 }

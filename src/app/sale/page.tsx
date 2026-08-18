@@ -1,9 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react'
 import ProductCard from '@/components/ProductCard'
+import type { ProductListItem } from '@/types/firestore'
 
 export default function SalePage() {
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState<ProductListItem[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function SalePage() {
       <h1 className="text-3xl font-serif mb-2">Sale</h1>
       <p className="text-gray-500 mb-8">Limited‑time offers on selected luxury pieces</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {products.map((product: any) => (
+        {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

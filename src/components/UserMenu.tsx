@@ -1,34 +1,34 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { onAuthStateChanged, signOut, type User } from 'firebase/auth'
+import { auth } from '@/lib/firebase/client'
+import { clearSession } from '@/lib/firebase/establish-session'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export default function UserMenu() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-    }
-    getUser()
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      setUser(session?.user ?? null)
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser)
+      if (firebaseUser) {
+        const tokenResult = await firebaseUser.getIdTokenResult()
+        setIsAdmin(tokenResult.claims.admin === true)
+      } else {
+        setIsAdmin(false)
+      }
       router.refresh()
     })
-
-    return () => {
-      listener?.subscription.unsubscribe()
-    }
-  }, [supabase, router])
+    return () => unsubscribe()
+  }, [router])
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await signOut(auth)
+    await clearSession()
     setMenuOpen(false)
     router.push('/')
   }
@@ -71,6 +71,11 @@ export default function UserMenu() {
           <Link href="/wishlist" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setMenuOpen(false)}>
             My Wishlist
           </Link>
+          {isAdmin && (
+            <Link href="/admin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setMenuOpen(false)}>
+              Admin
+            </Link>
+          )}
           <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">
             Logout
           </button>

@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/', '/checkout/verify', '/login', '/signup'],
+      disallow: ['/api/', '/admin', '/checkout/verify', '/login', '/signup'],
     },
-    sitemap: `${process.env.NEXT_PUBLIC_BASE_URL}/sitemap.xml`,
+    sitemap: `${process.env.NEXT_PUBLIC_APP_URL || 'https://luxury-furniture.vercel.app'}/sitemap.xml`,
   }
 }

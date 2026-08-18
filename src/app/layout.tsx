@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
+import CartSync from '@/components/CartSync'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${playfair.variable} font-sans`}>
         <ThemeProvider>
           <CartProvider>
+            <CartSync />
             <Navbar />
             <main className="min-h-screen pt-20">
               <Suspense fallback={<div className="h-screen flex items-center justify-center">Loading...</div>}>

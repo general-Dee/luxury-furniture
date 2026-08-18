@@ -1,31 +1,58 @@
 'use client'
-import { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+import { Suspense, useState } from 'react'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '@/lib/firebase/client'
+import { establishSession } from '@/lib/firebase/establish-session'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
+function firebaseAuthErrorMessage(error: unknown): string {
+  const code = (error as { code?: string })?.code
+  switch (code) {
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+      return 'Incorrect email or password.'
+    case 'auth/too-many-requests':
+      return 'Too many attempts. Please try again later.'
+    default:
+      return 'Something went wrong. Please try again.'
+  }
+}
+
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  )
+}
+
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const searchParams = useSearchParams()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      setError(error.message)
-    } else {
-      router.push('/')
+    try {
+      const credential = await signInWithEmailAndPassword(auth, email, password)
+      await establishSession(credential.user)
+      const redirectTo = searchParams.get('redirectTo')
+      router.push(redirectTo || '/')
       router.refresh()
+    } catch (err) {
+      setError(firebaseAuthErrorMessage(err))
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (
@@ -88,7 +115,7 @@ export default function LoginPage() {
 
           <div className="text-sm text-center">
             <Link href="/signup" className="font-medium text-amber-800 hover:text-amber-900">
-              Don't have an account? Sign up
+              Don&apos;t have an account? Sign up
             </Link>
           </div>
         </form>

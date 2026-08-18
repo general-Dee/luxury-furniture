@@ -9,10 +9,11 @@ export default function CartPage() {
   const [mounted, setMounted] = useState(false)
   const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCartStore()
 
+  // Standard hydration-safe "mounted" flag: zustand's persisted store reads
+  // localStorage, which differs between the SSR pass and the client, so
+  // rendering is deferred one tick until we're definitely on the client.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), [])
-
-  // Debug log
-  console.log('Cart page render – totalPrice:', totalPrice, 'items:', items)
 
   if (!mounted) {
     return <div className="container-luxury py-20 text-center">Loading cart...</div>

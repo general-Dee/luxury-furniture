@@ -1,9 +1,26 @@
 'use client'
 import { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
+import { auth, db } from '@/lib/firebase/client'
+import { establishSession } from '@/lib/firebase/establish-session'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+
+function firebaseAuthErrorMessage(error: unknown): string {
+  const code = (error as { code?: string })?.code
+  switch (code) {
+    case 'auth/email-already-in-use':
+      return 'An account with this email already exists.'
+    case 'auth/weak-password':
+      return 'Password must be at least 6 characters.'
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.'
+    default:
+      return 'Something went wrong. Please try again.'
+  }
+}
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -11,20 +28,29 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.signUp({ email, password })
-    if (error) {
-      setError(error.message)
-    } else {
-      router.push('/login?message=Check your email to confirm your account')
+    try {
+      const credential = await createUserWithEmailAndPassword(auth, email, password)
+      await setDoc(doc(db, 'users', credential.user.uid), {
+        email: credential.user.email,
+        displayName: null,
+        phone: null,
+        createdAt: serverTimestamp(),
+      })
+      await sendEmailVerification(credential.user)
+      await establishSession(credential.user)
+      router.push('/')
+      router.refresh()
+    } catch (err) {
+      setError(firebaseAuthErrorMessage(err))
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (

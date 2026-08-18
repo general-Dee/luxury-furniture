@@ -8,11 +8,12 @@ export default function CartIcon() {
   const totalItems = useCartStore((state) => state.totalItems)
   const [animate, setAnimate] = useState(false)
 
-  // Debug log
-  console.log('CartIcon render – totalItems:', totalItems)
-
+  // Triggers a one-shot bounce animation whenever the cart count changes —
+  // genuinely reacting to an external change (the zustand store), not
+  // synchronizing render output, so an effect is the right tool here.
   useEffect(() => {
     if (totalItems > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAnimate(true)
       const timer = setTimeout(() => setAnimate(false), 400)
       return () => clearTimeout(timer)

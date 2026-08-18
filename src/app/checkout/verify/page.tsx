@@ -1,51 +1,61 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { createClient } from '@/utils/supabase/client'
+import { useCartStore } from '@/store/cartStore'
 import Link from 'next/link'
 
 export default function VerifyPage() {
+  return (
+    <Suspense fallback={null}>
+      <VerifyContent />
+    </Suspense>
+  )
+}
+
+function VerifyContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [status, setStatus] = useState<'verifying' | 'success' | 'pending' | 'error'>('verifying')
-  const supabase = createClient()
+  const clearCart = useCartStore((s) => s.clearCart)
+  const reference = searchParams.get('reference') || searchParams.get('trxref')
+  const [status, setStatus] = useState<'verifying' | 'success' | 'pending' | 'error'>(
+    reference ? 'verifying' : 'error'
+  )
 
   useEffect(() => {
-    const reference = searchParams.get('reference')
-    const orderId = searchParams.get('order_id')
+    if (!reference) return
 
-    if (!reference || !orderId) {
-      setStatus('error')
-      return
-    }
+    let cancelled = false
 
     const verifyPayment = async () => {
-      const { data: order, error } = await supabase
-        .from('orders')
-        .select('status')
-        .eq('id', orderId)
-        .single()
+      try {
+        const res = await fetch(`/api/paystack/verify?reference=${encodeURIComponent(reference)}`)
+        const data = await res.json()
+        if (cancelled) return
 
-      // Cast order to any to access status
-      const orderStatus = (order as any)?.status
-
-      if (orderStatus === 'paid') {
-        setStatus('success')
-        localStorage.removeItem('luxury-cart')
-        setTimeout(() => router.push('/orders'), 3000)
-      } else if (orderStatus === 'pending') {
-        setStatus('pending')
-      } else {
-        setStatus('error')
+        if (data.status === 'paid') {
+          setStatus('success')
+          clearCart()
+          setTimeout(() => router.push('/orders'), 3000)
+        } else if (data.status === 'pending') {
+          setStatus('pending')
+        } else {
+          setStatus('error')
+        }
+      } catch {
+        if (!cancelled) setStatus('error')
       }
     }
 
     verifyPayment()
     const interval = setInterval(verifyPayment, 2000)
-    setTimeout(() => clearInterval(interval), 10000)
+    const timeout = setTimeout(() => clearInterval(interval), 10000)
 
-    return () => clearInterval(interval)
-  }, [searchParams, supabase, router])
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+      clearTimeout(timeout)
+    }
+  }, [reference, router, clearCart])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-luxury-cream px-4">

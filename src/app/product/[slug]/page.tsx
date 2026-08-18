@@ -1,4 +1,3 @@
-import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import AddToCartButton from '@/components/AddToCartButton'
@@ -6,6 +5,10 @@ import ReviewForm from '@/components/ReviewForm'
 import ProductReviews from '@/components/ProductReviews'
 import { Star } from 'lucide-react'
 import { Metadata } from 'next'
+import { adminDb } from '@/lib/firebase/admin'
+import { getServerUser } from '@/lib/firebase/session'
+
+export const dynamic = 'force-dynamic'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -13,13 +16,9 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const supabase = await createClient()
-  const { data: product } = await supabase
-    .from('products')
-    .select('name, description')
-    .eq('slug', slug)
-    .single()
-  if (!product) return {}
+  const snap = await adminDb.collection('products').doc(slug).get()
+  if (!snap.exists) return {}
+  const product = snap.data()!
   return {
     title: `${product.name} | Luxury Furniture Nigeria`,
     description: product.description?.slice(0, 160),
@@ -28,38 +27,46 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params
-  const supabase = await createClient()
 
-  // Fetch product
-  const { data: product, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+  const productSnap = await adminDb.collection('products').doc(slug).get()
+  if (!productSnap.exists) notFound()
+  const productData = productSnap.data()!
+  const product = {
+    id: productSnap.id,
+    slug: productSnap.id,
+    name: productData.name,
+    description: productData.description ?? '',
+    price: productData.price,
+    images: productData.images ?? [],
+  }
 
-  if (error || !product) notFound()
+  const reviewsSnap = await adminDb
+    .collection('reviews')
+    .where('productId', '==', slug)
+    .orderBy('createdAt', 'desc')
+    .get()
+  const reviews = reviewsSnap.docs.map((d) => {
+    const data = d.data()
+    return {
+      id: d.id,
+      rating: data.rating,
+      title: data.title || null,
+      comment: data.comment,
+      images: data.images ?? [],
+      userName: data.userName,
+      createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
+    }
+  })
 
-  // Fetch reviews with profiles (email)
-  const { data: reviewsData } = await supabase
-    .from('reviews')
-    .select('*, profiles!user_id(email)')
-    .eq('product_id', product.id)
-    .order('created_at', { ascending: false }) as any
-
-  const reviews = reviewsData || []
-  const avgRating = reviews.length
-    ? (reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviews.length).toFixed(1)
-    : null
-
-  // Get current user
-  const { data: { user } } = await supabase.auth.getUser()
+  const avgRating = productData.avgRating ? productData.avgRating.toFixed(1) : null
+  const user = await getServerUser()
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-12">
       <div className="grid md:grid-cols-2 gap-12">
         {/* Product Images */}
         <div className="space-y-4">
-          {product.images && product.images.length > 0 ? (
+          {product.images.length > 0 ? (
             product.images.map((img: string, idx: number) => (
               <div key={idx} className="relative h-96 w-full bg-gray-100 rounded-lg overflow-hidden">
                 <Image
@@ -105,9 +112,7 @@ export default async function ProductPage({ params }: Props) {
 
       {/* Reviews Section */}
       <div className="mt-12">
-        {user && (
-          <ReviewForm productId={product.id} userId={user.id} onReviewSubmitted={() => {}} />
-        )}
+        {user && <ReviewForm productId={product.slug} />}
         <ProductReviews reviews={reviews} />
       </div>
     </main>

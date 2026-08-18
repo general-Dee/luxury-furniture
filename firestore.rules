@@ -1,0 +1,69 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // --- Public catalog data ---
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /blog_posts/{slug} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // --- Reviews: public read, owner-authored create, owner/admin moderate ---
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+    }
+
+    // --- Orders: server-only writes (Admin SDK bypasses rules entirely) ---
+    match /orders/{orderId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow write: if false;
+    }
+
+    // --- Per-user data ---
+    match /users/{uid} {
+      allow read, write: if isOwner(uid) || isAdmin();
+
+      match /addresses/{addressId} {
+        allow read, write: if isOwner(uid) || isAdmin();
+      }
+
+      match /wishlist/{productId} {
+        allow read, write: if isOwner(uid) || isAdmin();
+      }
+    }
+
+    // --- Server-only collections: no client access ---
+    match /subscribers/{docId} {
+      allow read, write: if false;
+    }
+
+    match /abandoned_carts/{userId} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,32 +1,29 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { NextRequest, NextResponse } from 'next/server'
+import { FieldValue } from 'firebase-admin/firestore'
+import { adminDb } from '@/lib/firebase/admin'
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Get the event data from Kit
-    const event = await req.json();
+    const event = await req.json()
 
-    // 2. Check if it's a subscriber activation event
     if (event.type === 'subscriber.subscriber_activate') {
-      const subscriber = event.data;
-      const email = subscriber.email_address;
-
-      // 3. Add the confirmed subscriber to your Supabase 'subscribers' table
-      const supabase = await createClient();
-      const { error } = await supabase
-        .from('subscribers')
-        .upsert({ email, is_active: true, subscribed_at: new Date().toISOString() }, { onConflict: 'email' });
-
-      if (error) {
-        console.error('Failed to sync subscriber to DB:', error);
-        return NextResponse.json({ error: 'Database sync failed' }, { status: 500 });
+      const email: string | undefined = event.data?.email_address
+      if (email) {
+        const docId = email.toLowerCase()
+        await adminDb.collection('subscribers').doc(docId).set(
+          {
+            email: docId,
+            isActive: true,
+            subscribedAt: FieldValue.serverTimestamp(),
+          },
+          { merge: true }
+        )
       }
     }
 
-    // 4. Always acknowledge receipt of the webhook
-    return NextResponse.json({ received: true });
+    return NextResponse.json({ received: true })
   } catch (error) {
-    console.error('Webhook error:', error);
-    return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
+    console.error('Webhook error:', error)
+    return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 })
   }
 }

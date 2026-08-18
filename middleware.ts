@@ -1,26 +1,18 @@
-﻿import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { SESSION_COOKIE_NAME } from '@/lib/firebase/constants'
 
-export async function middleware(request: NextRequest) {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return request.cookies.getAll() },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
-        },
-      },
-    }
-  )
+// Edge middleware can't run firebase-admin (needs Node crypto), so this is a
+// cheap presence check only — it just avoids an obviously-logged-out user
+// loading a protected page. The pages/routes behind these paths each verify
+// the session cookie for real via getServerUser()/requireAdmin(), so this is
+// a UX shortcut, not the security boundary.
+export function middleware(request: NextRequest) {
+  const hasSession = Boolean(request.cookies.get(SESSION_COOKIE_NAME)?.value)
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const protectedPaths = ['/account', '/orders', '/checkout', '/admin']
+  const isProtected = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path))
 
-  const protectedPaths = ['/account', '/orders', '/checkout']
-  const isProtected = protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))
-
-  if (isProtected && !user) {
+  if (isProtected && !hasSession) {
     const redirectUrl = new URL('/login', request.url)
     redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
     return NextResponse.redirect(redirectUrl)
@@ -30,7 +22,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 }

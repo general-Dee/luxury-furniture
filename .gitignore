@@ -30,6 +30,19 @@ yarn-error.log*
 # vercel
 .vercel
 
+# firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+*firebase-adminsdk*.json
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+npm-install.log

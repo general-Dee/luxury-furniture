@@ -1,17 +1,26 @@
-import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
+import { adminDb } from '@/lib/firebase/admin'
 
 export default async function RecentPosts() {
-  const supabase = await createClient()
-  const { data: posts } = await supabase
-    .from('blog_posts')
-    .select('slug, title, featured_image, published_at')
-    .eq('published', true)
-    .order('published_at', { ascending: false })
+  const snapshot = await adminDb
+    .collection('blog_posts')
+    .where('published', '==', true)
+    .orderBy('publishedAt', 'desc')
     .limit(3)
+    .get()
 
-  if (!posts || posts.length === 0) return null
+  if (snapshot.empty) return null
+
+  const posts = snapshot.docs.map((d) => {
+    const data = d.data()
+    return {
+      slug: d.id,
+      title: data.title as string,
+      featuredImage: data.featuredImage as string | null,
+      publishedAt: data.publishedAt?.toDate ? data.publishedAt.toDate() : null,
+    }
+  })
 
   return (
     <div className="bg-white rounded-lg p-6 border border-gray-200">
@@ -19,10 +28,10 @@ export default async function RecentPosts() {
       <div className="space-y-4">
         {posts.map((post) => (
           <Link key={post.slug} href={`/blog/${post.slug}`} className="group flex gap-3">
-            {post.featured_image && (
+            {post.featuredImage && (
               <div className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden">
                 <Image
-                  src={post.featured_image}
+                  src={post.featuredImage}
                   alt={post.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -33,13 +42,15 @@ export default async function RecentPosts() {
               <h4 className="font-serif text-gray-800 group-hover:text-luxury-gold transition line-clamp-2">
                 {post.title}
               </h4>
-              <p className="text-xs text-gray-500 mt-1">
-                {new Date(post.published_at).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </p>
+              {post.publishedAt && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {post.publishedAt.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </p>
+              )}
             </div>
           </Link>
         ))}

@@ -1,29 +1,27 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { collection, getDocs } from 'firebase/firestore'
+import { db } from '@/lib/firebase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-type Category = { id: string; name: string; slug: string }
+type Category = { slug: string; name: string }
 
 export default function CategoryNav() {
   const [categories, setCategories] = useState<Category[]>([])
-  const [activeSlug, setActiveSlug] = useState<string>('')
   const router = useRouter()
   const searchParams = useSearchParams()
-  const supabase = createClient()
+  // Derived directly from the URL — no need to mirror it into local state.
+  const activeSlug = searchParams.get('category') || 'all'
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data } = await supabase.from('categories').select('*')
-      if (data) setCategories(data)
+      const snapshot = await getDocs(collection(db, 'categories'))
+      setCategories(snapshot.docs.map((d) => ({ slug: d.id, name: d.data().name })))
     }
     fetchCategories()
-    const category = searchParams.get('category')
-    if (category) setActiveSlug(category)
-  }, [searchParams])
+  }, [])
 
   const handleCategoryClick = (slug: string) => {
-    setActiveSlug(slug)
     const params = new URLSearchParams(searchParams.toString())
     if (slug === 'all') params.delete('category')
     else params.set('category', slug)
@@ -35,7 +33,7 @@ export default function CategoryNav() {
       <button
         onClick={() => handleCategoryClick('all')}
         className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-          activeSlug === '' || activeSlug === 'all'
+          activeSlug === 'all'
             ? 'bg-luxury-gold text-white shadow-md'
             : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
         }`}
@@ -44,7 +42,7 @@ export default function CategoryNav() {
       </button>
       {categories.map((cat) => (
         <button
-          key={cat.id}
+          key={cat.slug}
           onClick={() => handleCategoryClick(cat.slug)}
           className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
             activeSlug === cat.slug

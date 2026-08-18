@@ -1,72 +1,98 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { NextResponse } from 'next/server'
+import { FieldValue } from 'firebase-admin/firestore'
+import { adminDb } from '@/lib/firebase/admin'
+import { getServerUser } from '@/lib/firebase/session'
+import { computeOrderItems, type CartItemInput } from '@/lib/order-items'
 
-export async function POST(req: NextRequest) {
+const PAYSTACK_BASE_URL = 'https://api.paystack.co'
+
+export async function POST(request: Request) {
+  const user = await getServerUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Sign in required' }, { status: 401 })
+  }
+
+  const body = await request.json()
+  const { items, email, phone, address, city, state } = body as {
+    items: CartItemInput[]
+    email: string
+    phone: string
+    address: string
+    city: string
+    state: string
+  }
+
+  if (!Array.isArray(items) || items.length === 0) {
+    return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
+  }
+  if (!email || !phone || !address || !city || !state) {
+    return NextResponse.json({ error: 'Missing shipping details' }, { status: 400 })
+  }
+
+  // Re-fetch authoritative prices/stock from Firestore — never trust client-supplied prices.
+  const productSnaps = await Promise.all(
+    items.map((item) => adminDb.collection('products').doc(item.productId).get())
+  )
+  const products = productSnaps.map((snap) => {
+    if (!snap.exists) return null
+    const data = snap.data()!
+    return { id: snap.id, name: data.name, price: data.price, stock: data.stock ?? 0, images: data.images ?? [] }
+  })
+
+  const result = computeOrderItems(items, products)
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: 400 })
+  }
+  const { items: orderItems, totalAmount } = result
+
+  const orderRef = adminDb.collection('orders').doc()
+  await orderRef.set({
+    userId: user.uid,
+    email,
+    phone,
+    address,
+    city,
+    state,
+    items: orderItems,
+    totalAmount,
+    status: 'pending',
+    paystackReference: orderRef.id,
+    paystackAccessCode: null,
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+    paidAt: null,
+  })
+
   try {
-    const supabase = await createClient()
-    const { email, amount, orderId, metadata } = await req.json()
-
-    if (!email || !amount || !orderId) {
-      return NextResponse.json(
-        { error: 'Missing required fields: email, amount, or orderId' },
-        { status: 400 }
-      )
-    }
-
-    const { data: { user } } = await supabase.auth.getUser()
-
-    // TEMPORARY: Hardcoded test secret key (remove after testing)
-    const PAYSTACK_SECRET_KEY = 'sk_test_993ded882c7d7ade838596211d5e13b5209d1b60'
-
-    const response = await fetch('https://api.paystack.co/transaction/initialize', {
+    const paystackRes = await fetch(`${PAYSTACK_BASE_URL}/transaction/initialize`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         email,
-        amount: Math.round(amount * 100),
-        callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/verify?order_id=${orderId}`,
-        metadata: {
-          ...metadata,
-          order_id: orderId,
-          user_id: user?.id || null,
-        },
+        amount: Math.round(totalAmount * 100), // Paystack expects kobo
+        reference: orderRef.id,
+        callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/verify`,
       }),
     })
+    const paystackData = await paystackRes.json()
 
-    const data = await response.json()
-
-    if (!data.status) {
-      console.error('Paystack initialization failed:', data.message)
-      return NextResponse.json(
-        { error: data.message || 'Payment initialization failed' },
-        { status: 400 }
-      )
+    if (!paystackRes.ok || !paystackData.status) {
+      await orderRef.update({ status: 'failed', updatedAt: FieldValue.serverTimestamp() })
+      return NextResponse.json({ error: paystackData.message || 'Failed to initialize payment' }, { status: 502 })
     }
 
-    const { error: updateError } = await supabase
-      .from('orders')
-      .update({
-        paystack_reference: data.data.reference,
-        paystack_access_code: data.data.access_code,
-      })
-      .eq('id', orderId)
-
-    if (updateError) {
-      console.error('Failed to update order with Paystack reference:', updateError)
-    }
+    await orderRef.update({ paystackAccessCode: paystackData.data.access_code })
 
     return NextResponse.json({
-      authorization_url: data.data.authorization_url,
-      reference: data.data.reference,
+      authorizationUrl: paystackData.data.authorization_url,
+      reference: orderRef.id,
     })
   } catch (error) {
-    console.error('Unexpected error in /api/paystack/initialize:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    console.error('Paystack initialize error:', error)
+    await orderRef.update({ status: 'failed', updatedAt: FieldValue.serverTimestamp() })
+    return NextResponse.json({ error: 'Failed to initialize payment' }, { status: 502 })
   }
 }

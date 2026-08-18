@@ -1,39 +1,23 @@
 'use client'
 import { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
 import { Star, X, Upload } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { uploadToCloudinary } from '@/lib/cloudinary-upload'
 
 interface ReviewFormProps {
   productId: string
-  userId: string
   onReviewSubmitted?: () => void
 }
 
-export default function ReviewForm({ productId, userId, onReviewSubmitted }: ReviewFormProps) {
+export default function ReviewForm({ productId, onReviewSubmitted }: ReviewFormProps) {
   const [rating, setRating] = useState(5)
   const [title, setTitle] = useState('')
   const [comment, setComment] = useState('')
   const [images, setImages] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
   const [loading, setLoading] = useState(false)
-  const supabase = createClient()
   const router = useRouter()
-
-  const uploadImage = async (file: File): Promise<string> => {
-    const fileExt = file.name.split('.').pop()
-    const fileName = `review-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-    const filePath = `reviews/${fileName}`
-    const { error } = await supabase.storage
-      .from('product-images')
-      .upload(filePath, file)
-    if (error) throw error
-    const { data: { publicUrl } } = supabase.storage
-      .from('product-images')
-      .getPublicUrl(filePath)
-    return publicUrl
-  }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
@@ -43,9 +27,11 @@ export default function ReviewForm({ productId, userId, onReviewSubmitted }: Rev
     }
     setUploading(true)
     try {
-      const urls = await Promise.all(files.map(uploadImage))
-      setImages(prev => [...prev, ...urls])
-    } catch (err) {
+      const urls = await Promise.all(
+        files.map((file) => uploadToCloudinary(file, '/api/reviews/cloudinary-sign'))
+      )
+      setImages((prev) => [...prev, ...urls])
+    } catch {
       alert('Upload failed')
     } finally {
       setUploading(false)
@@ -53,32 +39,33 @@ export default function ReviewForm({ productId, userId, onReviewSubmitted }: Rev
   }
 
   const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index))
+    setImages((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    const { error } = await supabase.from('reviews').insert({
-      product_id: productId,
-      user_id: userId,
-      rating,
-      title,
-      comment,
-      images,
-      verified_purchase: false,
-    })
-    if (error) {
-      alert(error.message)
-    } else {
+    try {
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, rating, title, comment, images }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to submit review')
+      }
       setRating(5)
       setTitle('')
       setComment('')
       setImages([])
       if (onReviewSubmitted) onReviewSubmitted()
       else router.refresh()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to submit review')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (

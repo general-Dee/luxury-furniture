@@ -5,25 +5,26 @@ import ProductCard from '@/components/ProductCard'
 import Hero from '@/components/Hero'
 import CategoryNav from '@/components/CategoryNav'
 import ProductFilters from '@/components/ProductFilters'
+import type { ProductListItem } from '@/types/firestore'
 
 const PRODUCTS_PER_PAGE = 12
 
 export default function Home() {
   const searchParams = useSearchParams()
-  const [products, setProducts] = useState<any[]>([])
-  const [page, setPage] = useState(1)
+  const [products, setProducts] = useState<ProductListItem[]>([])
+  const [cursor, setCursor] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchProducts = useCallback(async (pageNum: number, append = false) => {
+  const fetchProducts = useCallback(async (afterCursor: string | null, append = false) => {
     setLoading(true)
     setError(null)
     try {
       const params = new URLSearchParams(searchParams.toString())
-      params.set('page', pageNum.toString())
       params.set('limit', PRODUCTS_PER_PAGE.toString())
+      if (afterCursor) params.set('cursor', afterCursor)
       const url = `/api/products?${params.toString()}`
       const res = await fetch(url)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
@@ -34,9 +35,10 @@ export default function Home() {
         setProducts(data.products || [])
       }
       setHasMore(data.hasMore)
-    } catch (err: any) {
+      setCursor(data.nextCursor)
+    } catch (err) {
       console.error('Fetch error:', err)
-      setError(err.message)
+      setError(err instanceof Error ? err.message : 'Failed to load products')
     } finally {
       setLoading(false)
       setInitialLoading(false)
@@ -44,14 +46,12 @@ export default function Home() {
   }, [searchParams])
 
   useEffect(() => {
-    setPage(1)
-    fetchProducts(1, false)
+    setCursor(null)
+    fetchProducts(null, false)
   }, [searchParams, fetchProducts])
 
   const loadMore = () => {
-    const nextPage = page + 1
-    setPage(nextPage)
-    fetchProducts(nextPage, true)
+    fetchProducts(cursor, true)
   }
 
   if (initialLoading) return <div className="container-luxury py-20 text-center">Loading products...</div>
@@ -70,7 +70,7 @@ export default function Home() {
             </p>
           ) : (
             products.map((product, index) => (
-              <ProductCard key={product.id} product={product} priority={index < 4 && page === 1} />
+              <ProductCard key={product.id} product={product} priority={index < 4} />
             ))
           )}
         </div>

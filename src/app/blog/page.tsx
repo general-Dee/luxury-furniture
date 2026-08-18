@@ -1,20 +1,32 @@
-import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
-import RecentPosts from '@/components/RecentPosts'  // remove NewsletterSignup import
+import RecentPosts from '@/components/RecentPosts'
+import { adminDb } from '@/lib/firebase/admin'
 
-function formatDate(dateString: string) {
-  const date = new Date(dateString)
+export const dynamic = 'force-dynamic'
+
+function formatDate(date: Date) {
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
 export default async function BlogPage() {
-  const supabase = await createClient()
-  const { data: posts } = await supabase
-    .from('blog_posts')
-    .select('*')
-    .eq('published', true)
-    .order('published_at', { ascending: false })
+  const snapshot = await adminDb
+    .collection('blog_posts')
+    .where('published', '==', true)
+    .orderBy('publishedAt', 'desc')
+    .get()
+
+  const posts = snapshot.docs.map((d) => {
+    const data = d.data()
+    return {
+      slug: d.id,
+      title: data.title as string,
+      excerpt: data.excerpt as string | undefined,
+      content: data.content as string,
+      featuredImage: data.featuredImage as string | null,
+      publishedAt: data.publishedAt?.toDate ? data.publishedAt.toDate() : null,
+    }
+  })
 
   return (
     <main className="container-luxury py-12">
@@ -24,13 +36,13 @@ export default async function BlogPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main content */}
         <div className="lg:col-span-2 space-y-8">
-          {posts?.map((post) => (
-            <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
+          {posts.map((post) => (
+            <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
               <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
-                {post.featured_image && (
+                {post.featuredImage && (
                   <div className="relative h-64 w-full">
                     <Image
-                      src={post.featured_image}
+                      src={post.featuredImage}
                       alt={post.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -42,7 +54,7 @@ export default async function BlogPage() {
                     {post.title}
                   </h2>
                   <p className="text-gray-500 text-sm mb-2">
-                    {post.published_at && formatDate(post.published_at)}
+                    {post.publishedAt && formatDate(post.publishedAt)}
                   </p>
                   <p className="text-gray-600">
                     {post.excerpt || post.content.replace(/<[^>]*>/g, '').slice(0, 150)}...

@@ -1,65 +1,68 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth, db } from '@/lib/firebase/client'
 import { Heart } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
+interface WishlistProduct {
+  slug: string
+  name: string
+  price: number
+  images: string[]
+}
+
 interface WishlistButtonProps {
-  productId: string
+  product: WishlistProduct
   className?: string
 }
 
-export default function WishlistButton({ productId, className = '' }: WishlistButtonProps) {
+export default function WishlistButton({ product, className = '' }: WishlistButtonProps) {
   const [isInWishlist, setIsInWishlist] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [userId, setUserId] = useState<string | null>(null)
-  const supabase = createClient()
+  const [uid, setUid] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
-    const checkWishlist = async () => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUid(user?.uid ?? null)
+      if (!user) {
+        setLoading(false)
+        return
+      }
       try {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) {
-          setLoading(false)
-          return
-        }
-        setUserId(user.id)
-        const { data } = await supabase
-          .from('wishlist')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('product_id', productId)
-          .maybeSingle()
-        setIsInWishlist(!!data)
+        const snap = await getDoc(doc(db, 'users', user.uid, 'wishlist', product.slug))
+        setIsInWishlist(snap.exists())
       } catch (err) {
-        // Ignore lock errors (non-critical)
         console.warn('Wishlist check error:', err)
       } finally {
         setLoading(false)
       }
-    }
-    checkWishlist()
-  }, [productId, supabase])
+    })
+    return () => unsubscribe()
+  }, [product.slug])
 
   const toggleWishlist = async () => {
-    if (!userId) {
+    if (!uid) {
       router.push('/login?redirectTo=' + encodeURIComponent(window.location.pathname))
       return
     }
 
+    const ref = doc(db, 'users', uid, 'wishlist', product.slug)
     try {
       if (isInWishlist) {
-        await supabase
-          .from('wishlist')
-          .delete()
-          .eq('user_id', userId)
-          .eq('product_id', productId)
+        await deleteDoc(ref)
         setIsInWishlist(false)
       } else {
-        await supabase
-          .from('wishlist')
-          .insert({ user_id: userId, product_id: productId } as any)
+        await setDoc(ref, {
+          productId: product.slug,
+          name: product.name,
+          slug: product.slug,
+          price: product.price,
+          image: product.images?.[0] || '',
+          createdAt: serverTimestamp(),
+        })
         setIsInWishlist(true)
       }
     } catch (err) {

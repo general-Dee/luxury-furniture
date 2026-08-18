@@ -9,8 +9,8 @@ interface Review {
   title: string | null
   comment: string
   images: string[]
-  created_at: string
-  profiles: { email: string }
+  createdAt: string
+  userName: string
 }
 
 export default function ProductReviews({ reviews }: { reviews: Review[] }) {
@@ -35,7 +35,7 @@ export default function ProductReviews({ reviews }: { reviews: Review[] }) {
               {review.title && <span className="font-medium">{review.title}</span>}
             </div>
             <p className="text-sm text-gray-500 mb-2">
-              {review.profiles.email.split('@')[0]} · {new Date(review.created_at).toLocaleDateString()}
+              {review.userName} · {new Date(review.createdAt).toLocaleDateString()}
             </p>
             <p className="text-gray-700">{review.comment}</p>
             {review.images.length > 0 && (

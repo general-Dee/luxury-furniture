@@ -6,7 +6,14 @@ import Image from 'next/image'
 
 const FALLBACK_IMAGE = 'https://placehold.co/600x400?text=Luxury+Furniture'
 
-export default function AddToCartButton({ product }: { product: any }) {
+type CartableProduct = {
+  id: string
+  name: string
+  price: number
+  images: string[]
+}
+
+export default function AddToCartButton({ product }: { product: CartableProduct }) {
   const addToCart = useCartStore((s) => s.addItem)
 
   const handleAdd = () => {

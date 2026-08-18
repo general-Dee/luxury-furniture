@@ -7,6 +7,9 @@ export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
 
+  // next-themes only knows the real theme after client hydration; this
+  // mounted flag avoids a server/client mismatch on the icon shown.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), [])
 
   if (!mounted) return <div className="w-7 h-7" />

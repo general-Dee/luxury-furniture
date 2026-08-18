@@ -6,18 +6,11 @@ import { useCartStore } from '@/store/cartStore'
 import { useState } from 'react'
 import WishlistButton from './WishlistButton'
 import toast from 'react-hot-toast'
+import type { ProductListItem } from '@/types/firestore'
 
 const FALLBACK_IMAGE = 'https://placehold.co/600x400?text=Luxury+Furniture'
 
-interface Product {
-  id: string
-  name: string
-  slug: string
-  price: number
-  images: string[]
-  description: string
-  categories?: { name: string; slug: string }
-}
+type Product = ProductListItem
 
 export default function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const addToCart = useCartStore((state) => state.addItem)
@@ -26,7 +19,6 @@ export default function ProductCard({ product, priority = false }: { product: Pr
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    console.log('🛒 Adding to cart:', product.name)
     addToCart({
       id: product.id,
       product_id: product.id,
@@ -80,7 +72,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
         </div>
       </Link>
       <div className="absolute top-2 right-2 z-10">
-        <WishlistButton productId={product.id} />
+        <WishlistButton product={product} />
       </div>
       <div className="p-5">
         <Link href={`/product/${product.slug}`}>
