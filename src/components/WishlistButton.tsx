@@ -70,7 +70,7 @@ export default function WishlistButton({ product, className = '' }: WishlistButt
     }
   }
 
-  if (loading) return <div className="w-6 h-6 animate-pulse bg-gray-200 rounded-full" />
+  if (loading) return <div className="w-6 h-6 animate-pulse bg-[var(--ind-color-surface)] rounded-full" />
 
   return (
     <button
@@ -79,7 +79,11 @@ export default function WishlistButton({ product, className = '' }: WishlistButt
       aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
     >
       <Heart
-        className={`w-6 h-6 ${isInWishlist ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+        className="w-6 h-6"
+        style={{
+          fill: isInWishlist ? 'var(--ind-color-accent)' : 'none',
+          color: isInWishlist ? 'var(--ind-color-accent)' : 'var(--ind-color-neutral-500)',
+        }}
       />
     </button>
   )

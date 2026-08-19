@@ -52,18 +52,18 @@ export default function OrderStatusActions({
   }
 
   if (status === 'failed' || status === 'cancelled') {
-    return <p className="text-sm text-gray-500">No actions available.</p>
+    return <p className="text-sm opacity-60">No actions available.</p>
   }
 
   return (
-    <div className="flex flex-col items-end gap-2">
+    <div className="ind-scope flex flex-col items-end gap-2">
       {error && <p className="text-sm text-red-600">{error}</p>}
       {status === 'paid' && (
         <div className="flex items-center gap-2">
           <select
             value={fulfillment}
             onChange={(e) => setFulfillment(e.target.value)}
-            className="border rounded px-2 py-1 text-sm"
+            className="ind-input !min-h-0 !w-auto text-sm"
           >
             {FULFILLMENT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -74,14 +74,14 @@ export default function OrderStatusActions({
           <button
             onClick={handleFulfillmentUpdate}
             disabled={saving || fulfillment === fulfillmentStatus}
-            className="bg-luxury-charcoal text-white px-3 py-1 rounded text-sm disabled:opacity-50"
+            className="ind-btn ind-btn-secondary"
           >
             Update
           </button>
         </div>
       )}
-      <button onClick={handleCancel} disabled={saving} className="text-red-600 text-sm disabled:opacity-50">
-        Cancel Order
+      <button onClick={handleCancel} disabled={saving} className="ind-btn ind-btn-ghost !text-red-600">
+        Cancel order
       </button>
     </div>
   )

@@ -95,58 +95,58 @@ export default function ProductForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
-      <div>
-        <label className="block text-sm font-medium mb-1">Name</label>
+    <form onSubmit={handleSubmit} className="ind-scope max-w-xl space-y-4">
+      <div className="ind-field">
+        <label>Name</label>
         <input
           type="text"
           value={values.name}
           onChange={(e) => setValues({ ...values, name: e.target.value })}
           required
-          className="w-full border rounded px-3 py-2"
+          className="ind-input"
         />
-        {mode === 'edit' && <p className="text-xs text-gray-400 mt-1">Slug: {slug} (fixed)</p>}
+        {mode === 'edit' && <p className="text-xs opacity-50 mt-1">Slug: {slug} (fixed)</p>}
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
+      <div className="ind-field">
+        <label>Description</label>
         <textarea
           value={values.description}
           onChange={(e) => setValues({ ...values, description: e.target.value })}
           rows={4}
-          className="w-full border rounded px-3 py-2"
+          className="ind-input"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Price (₦)</label>
+        <div className="ind-field">
+          <label>Price (₦)</label>
           <input
             type="number"
             min={0}
             value={values.price}
             onChange={(e) => setValues({ ...values, price: Number(e.target.value) })}
             required
-            className="w-full border rounded px-3 py-2"
+            className="ind-input"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Stock</label>
+        <div className="ind-field">
+          <label>Stock</label>
           <input
             type="number"
             min={0}
             value={values.stock}
             onChange={(e) => setValues({ ...values, stock: Number(e.target.value) })}
             required
-            className="w-full border rounded px-3 py-2"
+            className="ind-input"
           />
         </div>
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Category</label>
+      <div className="ind-field">
+        <label>Category</label>
         <select
           value={values.categorySlug}
           onChange={(e) => setValues({ ...values, categorySlug: e.target.value })}
           required
-          className="w-full border rounded px-3 py-2"
+          className="ind-input"
         >
           <option value="">-- Select category --</option>
           {categories.map((cat) => (
@@ -155,47 +155,49 @@ export default function ProductForm({
         </select>
       </div>
       <div className="flex gap-6">
-        <label className="flex items-center gap-2 text-sm">
+        <label className="ind-radio">
           <input
             type="checkbox"
             checked={values.isSale}
             onChange={(e) => setValues({ ...values, isSale: e.target.checked })}
           />
-          On Sale
+          <span className="ind-dot" />
+          On sale
         </label>
-        <label className="flex items-center gap-2 text-sm">
+        <label className="ind-radio">
           <input
             type="checkbox"
             checked={values.isActive}
             onChange={(e) => setValues({ ...values, isActive: e.target.checked })}
           />
+          <span className="ind-dot" />
           Active (visible on storefront)
         </label>
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Images</label>
+      <div className="ind-field">
+        <label>Images</label>
         <div className="flex flex-wrap gap-2 mb-2">
           {values.images.map((url, idx) => (
-            <div key={idx} className="relative w-20 h-20 rounded border overflow-hidden">
+            <div key={idx} className="relative w-20 h-20 border border-[var(--ind-color-divider)] overflow-hidden">
               <Image src={url} alt="Product" fill className="object-cover" />
-              <button type="button" onClick={() => removeImage(idx)} className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5">
+              <button type="button" onClick={() => removeImage(idx)} className="absolute top-0 right-0 bg-red-500 text-white p-0.5">
                 <X className="w-3 h-3" />
               </button>
             </div>
           ))}
-          <label className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded cursor-pointer hover:bg-gray-50">
+          <label className="flex flex-col items-center justify-center w-20 h-20 border border-dashed border-[var(--ind-color-divider)] cursor-pointer hover:bg-[var(--ind-color-surface)]">
             {uploading ? (
-              <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-[var(--ind-color-divider)] border-t-transparent rounded-full animate-spin" />
             ) : (
-              <span className="text-xs text-gray-400">+ Add</span>
+              <span className="text-xs opacity-50">+ Add</span>
             )}
             <input type="file" multiple accept="image/*" onChange={handleImageUpload} disabled={uploading} className="hidden" />
           </label>
         </div>
       </div>
       {error && <p className="text-red-500 text-sm">{error}</p>}
-      <button type="submit" disabled={saving} className="bg-luxury-charcoal text-white px-6 py-2 rounded disabled:opacity-50">
-        {saving ? 'Saving...' : mode === 'create' ? 'Create Product' : 'Save Changes'}
+      <button type="submit" disabled={saving} className="ind-btn ind-btn-primary">
+        {saving ? 'Saving...' : mode === 'create' ? 'Create product' : 'Save changes'}
       </button>
     </form>
   )

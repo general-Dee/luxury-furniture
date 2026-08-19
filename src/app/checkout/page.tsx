@@ -81,12 +81,12 @@ export default function CheckoutPage() {
     }
   }
 
-  if (!mounted) return <div className="container-luxury py-20 text-center">Loading...</div>
+  if (!mounted) return <div className="ind-scope max-w-7xl mx-auto px-6 py-20 text-center">Loading...</div>
   if (items.length === 0) {
     return (
-      <div className="container-luxury py-20 text-center">
-        <h2 className="text-2xl font-serif mb-4">Your cart is empty</h2>
-        <Link href="/" className="text-luxury-gold underline">Continue shopping</Link>
+      <div className="ind-scope max-w-7xl mx-auto px-6 py-20 text-center">
+        <h2 className="text-2xl mb-4">Your cart is empty</h2>
+        <Link href="/" className="ind-btn ind-btn-primary inline-block">Continue shopping</Link>
       </div>
     )
   }
@@ -120,18 +120,23 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="container-luxury py-12">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl font-serif text-center mb-8">Checkout</h1>
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 md:p-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <main className="ind-scope max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-[640px] mx-auto">
+        <Link href="/cart" className="ind-btn ind-btn-ghost !px-0 mb-4 inline-block">← Back to cart</Link>
+        <h1 className="uppercase text-4xl text-center mb-8">Checkout</h1>
+        <div className="ind-card ind-blueprint relative !p-6 md:!p-8">
+          <i className="ind-corner tl" />
+          <i className="ind-corner tr" />
+          <i className="ind-corner bl" />
+          <i className="ind-corner br" />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {savedAddresses.length > 0 && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select saved address</label>
+              <div className="ind-field">
+                <label>Select saved address</label>
                 <select
                   value={selectedAddressId}
                   onChange={(e) => handleAddressSelect(e.target.value)}
-                  className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 dark:bg-gray-800"
+                  className="ind-input"
                 >
                   <option value="">-- Choose saved address --</option>
                   {savedAddresses.map(addr => (
@@ -142,65 +147,66 @@ export default function CheckoutPage() {
                 </select>
               </div>
             )}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+            <div className="ind-field">
+              <label>Email</label>
               <input
                 {...register('email')}
                 type="email"
-                className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 dark:bg-gray-800"
+                className="ind-input"
                 placeholder="you@example.com"
               />
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
+            <div className="ind-field">
+              <label>Phone</label>
               <input
                 {...register('phone')}
                 type="tel"
-                className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 dark:bg-gray-800"
+                className="ind-input"
                 placeholder="0803 123 4567"
               />
               {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Address</label>
+            <div className="ind-field">
+              <label>Address</label>
               <input
                 {...register('address')}
-                className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 dark:bg-gray-800"
+                className="ind-input"
                 placeholder="Street, building, etc."
               />
               {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">City</label>
+              <div className="ind-field">
+                <label>City</label>
                 <input
                   {...register('city')}
-                  className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 dark:bg-gray-800"
+                  className="ind-input"
                   placeholder="Lagos"
                 />
                 {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">State</label>
+              <div className="ind-field">
+                <label>State</label>
                 <input
                   {...register('state')}
-                  className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 dark:bg-gray-800"
+                  className="ind-input"
                   placeholder="Lagos"
                 />
                 {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
               </div>
             </div>
             {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-            <div className="border-t pt-4 mt-6">
+            <hr className="border-[var(--ind-color-divider)] mt-6" />
+            <div className="pt-4">
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
-                <span className="text-luxury-gold">₦{totalPrice.toLocaleString()}</span>
+                <span className="text-[var(--ind-color-accent-700)]">₦{totalPrice.toLocaleString()}</span>
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full mt-6 text-center disabled:opacity-50"
+                className="ind-btn ind-btn-primary ind-btn-block mt-6"
               >
                 {loading ? 'Redirecting to payment...' : 'Pay with Paystack'}
               </button>

@@ -32,7 +32,7 @@ export default function AddToCartButton({ product }: { product: CartableProduct 
         </div>
         <div>
           <p className="font-semibold">{product.name}</p>
-          <p className="text-sm text-luxury-gold">Added to cart</p>
+          <p className="text-sm text-[var(--ind-color-accent)]">Added to cart</p>
         </div>
       </div>,
       { duration: 3000 }
@@ -44,9 +44,9 @@ export default function AddToCartButton({ product }: { product: CartableProduct 
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={handleAdd}
-      className="w-full bg-luxury-charcoal text-white py-4 text-lg font-semibold rounded-sm hover:bg-luxury-gold hover:text-luxury-charcoal transition-all duration-300"
+      className="ind-scope ind-btn ind-btn-primary ind-btn-block !py-4 !text-lg"
     >
-      Add to Cart – ₦{product.price.toLocaleString()}
+      Add to cart — ₦{product.price.toLocaleString()}
     </motion.button>
   )
 }

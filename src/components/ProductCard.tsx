@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -29,12 +29,12 @@ export default function ProductCard({ product, priority = false }: { product: Pr
     })
     toast.success(
       <div className="flex items-center gap-3">
-        <div className="relative w-10 h-10 rounded overflow-hidden">
+        <div className="relative w-10 h-10 overflow-hidden">
           <Image src={product.images[0] || FALLBACK_IMAGE} alt={product.name} width={40} height={40} className="object-cover" />
         </div>
         <div>
           <p className="font-semibold">{product.name}</p>
-          <p className="text-sm text-luxury-gold">Added to cart</p>
+          <p className="text-sm text-[var(--ind-color-accent)]">Added to cart</p>
         </div>
       </div>,
       { duration: 3000 }
@@ -51,10 +51,14 @@ export default function ProductCard({ product, priority = false }: { product: Pr
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4 }}
       whileHover={{ y: -8 }}
-      className="group bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 relative"
+      className="ind-scope ind-card ind-blueprint relative !p-0 !gap-0"
     >
+      <i className="ind-corner tl" />
+      <i className="ind-corner tr" />
+      <i className="ind-corner bl" />
+      <i className="ind-corner br" />
       <Link href={`/product/${product.slug}`}>
-        <div className="relative h-80 w-full overflow-hidden bg-gray-100 dark:bg-gray-700">
+        <div className="ind-duotone relative h-80 w-full overflow-hidden border-b border-[var(--ind-color-divider)]">
           <Image
             src={imgSrc}
             alt={product.name}
@@ -65,7 +69,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
             onError={handleImageError}
           />
           {product.categories && (
-            <span className="absolute top-4 left-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-full text-luxury-charcoal dark:text-gray-200">
+            <span className="ind-tag ind-tag-neutral absolute top-4 left-4 backdrop-blur-sm">
               {product.categories.name}
             </span>
           )}
@@ -74,23 +78,26 @@ export default function ProductCard({ product, priority = false }: { product: Pr
       <div className="absolute top-2 right-2 z-10">
         <WishlistButton product={product} />
       </div>
-      <div className="p-5">
+      <div className="p-4 flex flex-col gap-2">
         <Link href={`/product/${product.slug}`}>
-          <h3 className="text-xl font-serif text-gray-800 dark:text-gray-100 mb-2 hover:text-luxury-gold transition">
+          <h3 className="ind-card-title hover:text-[var(--ind-color-accent)] transition">
             {product.name}
           </h3>
         </Link>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-3 line-clamp-2">{product.description}</p>
-        <div className="flex justify-between items-center mt-4">
-          <span className="text-2xl font-bold text-luxury-gold">
+        <p className="ind-card-body line-clamp-2">{product.description}</p>
+        <div className="flex justify-between items-center mt-2">
+          <span
+            className="font-semibold text-xl"
+            style={{ fontFamily: 'var(--ind-font-heading)', color: 'var(--ind-color-accent-700)' }}
+          >
             ₦{product.price.toLocaleString()}
           </span>
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={handleAddToCart}
-            className="bg-luxury-charcoal text-white px-4 py-2 rounded-sm text-sm hover:bg-luxury-gold hover:text-luxury-charcoal transition-all duration-300"
+            className="ind-btn ind-btn-primary"
           >
-            Add to Cart
+            Add
           </motion.button>
         </div>
       </div>

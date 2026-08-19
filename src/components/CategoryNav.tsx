@@ -29,29 +29,25 @@ export default function CategoryNav() {
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-3 mb-12">
-      <button
+    <div className="ind-scope flex flex-wrap gap-3 mb-6">
+      <span
         onClick={() => handleCategoryClick('all')}
-        className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-          activeSlug === 'all'
-            ? 'bg-luxury-gold text-white shadow-md'
-            : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+        className={`ind-tag cursor-pointer !px-4 !py-1.5 !text-[13px] ${
+          activeSlug === 'all' ? 'ind-tag-accent' : 'ind-tag-outline'
         }`}
       >
         All
-      </button>
+      </span>
       {categories.map((cat) => (
-        <button
+        <span
           key={cat.slug}
           onClick={() => handleCategoryClick(cat.slug)}
-          className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-            activeSlug === cat.slug
-              ? 'bg-luxury-gold text-white shadow-md'
-              : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+          className={`ind-tag cursor-pointer !px-4 !py-1.5 !text-[13px] ${
+            activeSlug === cat.slug ? 'ind-tag-accent' : 'ind-tag-outline'
           }`}
         >
           {cat.name}
-        </button>
+        </span>
       ))}
     </div>
   )

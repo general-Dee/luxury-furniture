@@ -4,11 +4,11 @@ import { adminDb } from '@/lib/firebase/admin'
 
 export const dynamic = 'force-dynamic'
 
-const STATUS_COLOR: Record<string, string> = {
-  pending: 'text-yellow-600',
-  paid: 'text-green-600',
-  failed: 'text-red-600',
-  cancelled: 'text-gray-500',
+const STATUS_TAG: Record<string, string> = {
+  pending: 'ind-tag-outline',
+  paid: 'ind-tag-accent',
+  failed: 'ind-tag-neutral',
+  cancelled: 'ind-tag-neutral',
 }
 
 export default async function OrdersPage() {
@@ -32,23 +32,33 @@ export default async function OrdersPage() {
   })
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-serif mb-8">My Orders</h1>
+    <div className="ind-scope max-w-[960px] mx-auto px-6 py-12">
+      <h1 className="uppercase text-3xl mb-8">My orders</h1>
       {orders.length === 0 ? (
-        <p>You haven&apos;t placed any orders yet.</p>
+        <div className="ind-plate relative text-center" style={{ padding: 'calc(3 * var(--ind-space-8)) var(--ind-space-6)' }}>
+          <i className="ind-corner ind-plate-corner tl" />
+          <i className="ind-corner ind-plate-corner tr" />
+          <i className="ind-corner ind-plate-corner bl" />
+          <i className="ind-corner ind-plate-corner br" />
+          <p className="opacity-60">You haven&apos;t placed any orders yet.</p>
+        </div>
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <div key={order.id} className="border rounded-lg p-4 flex justify-between items-center">
+            <div key={order.id} className="ind-card ind-blueprint relative flex flex-row justify-between items-center">
+              <i className="ind-corner tl" />
+              <i className="ind-corner tr" />
+              <i className="ind-corner bl" />
+              <i className="ind-corner br" />
               <div>
                 <p className="font-medium">Order #{order.id.slice(0, 8)}</p>
-                <p className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
+                <p className="text-sm opacity-60">{new Date(order.createdAt).toLocaleDateString()}</p>
               </div>
-              <div className="text-right">
-                <p className="font-bold">₦{order.totalAmount.toLocaleString()}</p>
-                <p className={`text-sm ${STATUS_COLOR[order.status] ?? 'text-gray-500'}`}>
+              <div className="text-right flex flex-col items-end gap-2">
+                <p className="font-semibold text-lg">₦{order.totalAmount.toLocaleString()}</p>
+                <span className={`ind-tag ${STATUS_TAG[order.status] ?? 'ind-tag-neutral'}`}>
                   {order.status.toUpperCase()}
-                </p>
+                </span>
               </div>
             </div>
           ))}

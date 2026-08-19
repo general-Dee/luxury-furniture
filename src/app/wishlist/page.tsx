@@ -37,40 +37,52 @@ export default function WishlistPage() {
   }, [router])
 
   if (loading) {
-    return <div className="container-luxury py-20 text-center">Loading...</div>
+    return <div className="ind-scope max-w-7xl mx-auto px-6 py-20 text-center">Loading...</div>
   }
 
   if (items.length === 0) {
     return (
-      <div className="container-luxury py-20 text-center">
-        <h1 className="text-3xl font-serif mb-4">Your Wishlist</h1>
-        <p className="text-gray-500 mb-8">You haven&apos;t saved any products yet.</p>
-        <Link href="/" className="btn-primary">Start Shopping</Link>
+      <div className="ind-scope max-w-7xl mx-auto px-6 py-12">
+        <h1 className="uppercase text-3xl mb-8">Your wishlist</h1>
+        <div className="ind-plate relative text-center" style={{ padding: 'calc(3 * var(--ind-space-8)) var(--ind-space-6)' }}>
+          <i className="ind-corner ind-plate-corner tl" />
+          <i className="ind-corner ind-plate-corner tr" />
+          <i className="ind-corner ind-plate-corner bl" />
+          <i className="ind-corner ind-plate-corner br" />
+          <p className="opacity-60 mb-4">You haven&apos;t saved any products yet.</p>
+          <Link href="/" className="ind-btn ind-btn-primary">Start shopping</Link>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="container-luxury py-12">
-      <h1 className="text-3xl font-serif mb-8">Your Wishlist</h1>
+    <div className="ind-scope max-w-7xl mx-auto px-6 py-12">
+      <h1 className="uppercase text-3xl mb-8">Your wishlist</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {items.map((item) => (
-          <div key={item.productId} className="bg-white rounded-lg shadow-md overflow-hidden relative group">
+          <div key={item.productId} className="ind-card ind-blueprint relative !p-0 !gap-0">
+            <i className="ind-corner tl" />
+            <i className="ind-corner tr" />
+            <i className="ind-corner bl" />
+            <i className="ind-corner br" />
             <Link href={`/product/${item.slug}`}>
-              <div className="relative h-64 w-full bg-gray-100">
+              <div className="ind-duotone relative h-64 w-full border-b border-[var(--ind-color-divider)]">
                 <Image
                   src={item.image || '/placeholder.jpg'}
                   alt={item.name}
                   fill
-                  className="object-cover group-hover:scale-105 transition"
+                  className="object-cover"
                 />
               </div>
             </Link>
             <div className="p-4">
               <Link href={`/product/${item.slug}`}>
-                <h2 className="font-serif text-lg mb-1 hover:text-luxury-gold">{item.name}</h2>
+                <h2 className="ind-card-title hover:text-[var(--ind-color-accent)] transition">{item.name}</h2>
               </Link>
-              <p className="text-luxury-gold font-bold">₦{item.price.toLocaleString()}</p>
+              <p className="mt-1 text-[var(--ind-color-accent-700)]" style={{ fontFamily: 'var(--ind-font-heading)', fontWeight: 600 }}>
+                ₦{item.price.toLocaleString()}
+              </p>
             </div>
             <div className="absolute top-2 right-2">
               <WishlistButton product={{ slug: item.slug, name: item.name, price: item.price, images: [item.image] }} />

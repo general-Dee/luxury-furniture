@@ -87,86 +87,81 @@ export default function ProductFilters() {
   const formatCurrency = (value: number) => `₦${value.toLocaleString()}`
 
   return (
-    <div className="bg-white dark:bg-gray-900 p-5 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 mb-8">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search</label>
+    <div className="ind-scope ind-plate mb-8">
+      <i className="ind-corner ind-plate-corner tl" />
+      <i className="ind-corner ind-plate-corner tr" />
+      <i className="ind-corner ind-plate-corner bl" />
+      <i className="ind-corner ind-plate-corner br" />
+
+      <header className="flex flex-wrap border-b border-[var(--ind-color-divider)]">
+        <span className="flex-1 min-w-[16ch] px-6 py-2 text-[13px] tracking-[0.08em] uppercase font-semibold">
+          Filter the catalog
+        </span>
+        <span className="border-l border-[var(--ind-color-divider)] px-6 py-2 text-[13px] tracking-[0.08em] uppercase font-semibold opacity-70">
+          DOC HF-100
+        </span>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-[2fr_1.2fr_1fr] gap-6 p-6">
+        <div className="ind-field">
+          <label>Search</label>
           <input
             type="text"
             value={search}
             onChange={handleSearchChange}
             placeholder="e.g., velvet sofa"
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="ind-input"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sort By</label>
-          <select
-            value={sort}
-            onChange={handleSortChange}
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-          >
-            <option value="newest">Newest First</option>
-            <option value="price_asc">Price: Low to High</option>
-            <option value="price_desc">Price: High to Low</option>
+        <div className="ind-field">
+          <label>Sort by</label>
+          <select value={sort} onChange={handleSortChange} className="ind-input">
+            <option value="newest">Newest first</option>
+            <option value="price_asc">Price: low to high</option>
+            <option value="price_desc">Price: high to low</option>
           </select>
         </div>
-        <div className="flex items-end">
-          <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-            <input
-              type="checkbox"
-              checked={inStockOnly}
-              onChange={handleInStockChange}
-              className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-luxury-gold focus:ring-luxury-gold dark:bg-gray-800"
-            />
-            In Stock Only
+        <div className="flex items-end gap-3">
+          <label className="ind-radio">
+            <input type="checkbox" checked={inStockOnly} onChange={handleInStockChange} />
+            <span className="ind-dot" />
+            In stock only
           </label>
-        </div>
-        <div className="flex justify-end items-end">
-          <button onClick={clearFilters} className="text-sm text-luxury-gold hover:text-luxury-charcoal dark:hover:text-luxury-gold transition">Clear all filters</button>
         </div>
       </div>
 
-      <div className="border-t border-gray-200 dark:border-gray-800 pt-4 mt-2">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Price Range (₦)</label>
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-            <span>{formatCurrency(sliderMin)}</span>
-            <span>{formatCurrency(sliderMax)}</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-gray-500 dark:text-gray-400">₦{GLOBAL_MIN_PRICE.toLocaleString()}</span>
-            <input
-              type="range"
-              min={GLOBAL_MIN_PRICE}
-              max={GLOBAL_MAX_PRICE}
-              step={50000}
-              value={sliderMin}
-              onChange={handleMinSliderChange}
-              className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-luxury-gold"
-            />
-            <span className="text-xs text-gray-500 dark:text-gray-400">₦{GLOBAL_MAX_PRICE.toLocaleString()}</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-gray-500 dark:text-gray-400">₦{GLOBAL_MIN_PRICE.toLocaleString()}</span>
-            <input
-              type="range"
-              min={GLOBAL_MIN_PRICE}
-              max={GLOBAL_MAX_PRICE}
-              step={50000}
-              value={sliderMax}
-              onChange={handleMaxSliderChange}
-              className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-luxury-gold"
-            />
-            <span className="text-xs text-gray-500 dark:text-gray-400">₦{GLOBAL_MAX_PRICE.toLocaleString()}</span>
-          </div>
-          <button
-            onClick={applyPriceRange}
-            className="mt-2 text-xs bg-luxury-charcoal dark:bg-gray-700 text-white px-4 py-1.5 rounded hover:bg-luxury-gold hover:text-luxury-charcoal transition w-fit"
-          >
-            Apply Price Range
-          </button>
-        </div>
+      <div className="border-t border-[var(--ind-color-divider)] px-6 py-4 flex flex-wrap items-center gap-6">
+        <span className="text-xs opacity-70 whitespace-nowrap">Price range</span>
+        <span style={{ fontFamily: 'var(--ind-font-heading)' }} className="text-base">
+          {formatCurrency(sliderMin)}
+        </span>
+        <input
+          type="range"
+          min={GLOBAL_MIN_PRICE}
+          max={GLOBAL_MAX_PRICE}
+          step={50000}
+          value={sliderMin}
+          onChange={handleMinSliderChange}
+          className="flex-1 accent-[var(--ind-color-accent)]"
+        />
+        <input
+          type="range"
+          min={GLOBAL_MIN_PRICE}
+          max={GLOBAL_MAX_PRICE}
+          step={50000}
+          value={sliderMax}
+          onChange={handleMaxSliderChange}
+          className="flex-1 accent-[var(--ind-color-accent)]"
+        />
+        <span style={{ fontFamily: 'var(--ind-font-heading)' }} className="text-base">
+          {formatCurrency(sliderMax)}
+        </span>
+        <button onClick={applyPriceRange} className="ind-btn ind-btn-secondary">
+          Apply price range
+        </button>
+        <button onClick={clearFilters} className="ind-btn ind-btn-ghost">
+          Clear filters
+        </button>
       </div>
     </div>
   )

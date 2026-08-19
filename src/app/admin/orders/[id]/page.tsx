@@ -27,53 +27,75 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   return (
     <div className="max-w-3xl">
       <div className="flex justify-between items-start mb-6">
-        <h2 className="text-xl font-serif">Order #{id.slice(0, 8)}</h2>
+        <h2 className="uppercase text-xl m-0">Order #{id.slice(0, 8)}</h2>
         <OrderStatusActions orderId={id} status={status} fulfillmentStatus={fulfillmentStatus} />
       </div>
 
       <div className="grid grid-cols-2 gap-6 mb-6">
-        <div className="border rounded-lg p-4">
-          <h3 className="font-medium mb-2">Customer</h3>
-          <p className="text-sm text-gray-600">{data.email as string}</p>
-          <p className="text-sm text-gray-600">{data.phone as string}</p>
+        <div className="ind-card ind-blueprint relative">
+          <i className="ind-corner tl" />
+          <i className="ind-corner tr" />
+          <i className="ind-corner bl" />
+          <i className="ind-corner br" />
+          <h3 className="ind-card-title text-base">Customer</h3>
+          <p className="text-sm opacity-70">{data.email as string}</p>
+          <p className="text-sm opacity-70">{data.phone as string}</p>
         </div>
-        <div className="border rounded-lg p-4">
-          <h3 className="font-medium mb-2">Shipping Address</h3>
-          <p className="text-sm text-gray-600">{data.address as string}</p>
-          <p className="text-sm text-gray-600">
+        <div className="ind-card ind-blueprint relative">
+          <i className="ind-corner tl" />
+          <i className="ind-corner tr" />
+          <i className="ind-corner bl" />
+          <i className="ind-corner br" />
+          <h3 className="ind-card-title text-base">Shipping address</h3>
+          <p className="text-sm opacity-70">{data.address as string}</p>
+          <p className="text-sm opacity-70">
             {data.city as string}, {data.state as string}
           </p>
         </div>
       </div>
 
-      <div className="border rounded-lg divide-y mb-6">
-        {items.map((item, idx) => (
-          <div key={idx} className="flex items-center justify-between px-4 py-3">
-            <div className="flex items-center gap-3">
-              {item.image && (
-                <Image
-                  src={item.image}
-                  alt={item.productName}
-                  width={48}
-                  height={48}
-                  className="w-12 h-12 object-cover rounded"
-                />
-              )}
-              <div>
-                <p className="font-medium text-sm">{item.productName}</p>
-                <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-              </div>
-            </div>
-            <p className="text-sm font-medium">₦{(item.price * item.quantity).toLocaleString()}</p>
-          </div>
-        ))}
-        <div className="flex items-center justify-between px-4 py-3">
-          <p className="font-medium">Total</p>
-          <p className="font-bold">₦{(data.totalAmount as number).toLocaleString()}</p>
-        </div>
+      <div className="ind-plate relative mb-6">
+        <i className="ind-corner ind-plate-corner tl" />
+        <i className="ind-corner ind-plate-corner tr" />
+        <i className="ind-corner ind-plate-corner bl" />
+        <i className="ind-corner ind-plate-corner br" />
+        <table className="ind-table !m-0">
+          <tbody>
+            {items.map((item, idx) => (
+              <tr key={idx}>
+                <td>
+                  <div className="flex items-center gap-3">
+                    {item.image && (
+                      <Image
+                        src={item.image}
+                        alt={item.productName}
+                        width={48}
+                        height={48}
+                        className="w-12 h-12 object-cover"
+                      />
+                    )}
+                    <div>
+                      <p className="font-medium text-sm m-0">{item.productName}</p>
+                      <p className="text-sm opacity-60 m-0">Qty: {item.quantity}</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="text-right font-medium text-sm">₦{(item.price * item.quantity).toLocaleString()}</td>
+              </tr>
+            ))}
+            <tr>
+              <td className="font-semibold">Total</td>
+              <td className="text-right font-semibold">₦{(data.totalAmount as number).toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div className="border rounded-lg p-4 text-sm text-gray-600 space-y-1">
+      <div className="ind-card ind-blueprint relative text-sm opacity-70 space-y-1">
+        <i className="ind-corner tl" />
+        <i className="ind-corner tr" />
+        <i className="ind-corner bl" />
+        <i className="ind-corner br" />
         <p>Paystack reference: {(data.paystackReference as string) ?? '—'}</p>
         <p>Created: {createdAt ?? '—'}</p>
         <p>Updated: {updatedAt ?? '—'}</p>

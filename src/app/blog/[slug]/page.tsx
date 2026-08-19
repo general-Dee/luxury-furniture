@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
 import RecentPosts from '@/components/RecentPosts'
 import { adminDb } from '@/lib/firebase/admin'
 
@@ -25,20 +26,27 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   }
 
   return (
-    <main className="container-luxury py-12">
+    <main className="ind-scope max-w-7xl mx-auto px-6 py-12">
+      <Link href="/blog" className="ind-btn ind-btn-ghost !px-0 mb-6 inline-block">← All posts</Link>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <article className="lg:col-span-2">
-          <h1 className="text-4xl md:text-5xl font-serif mb-4">{post.title}</h1>
-          <div className="flex items-center gap-4 text-gray-500 text-sm mb-8">
-            <span>{post.publishedAt && formatDate(post.publishedAt)}</span>
-          </div>
+          <h1 className="uppercase text-4xl md:text-5xl mb-2">{post.title}</h1>
+          <p className="text-xs uppercase tracking-[0.06em] text-[var(--ind-color-accent-700)] mb-6">
+            {post.publishedAt && formatDate(post.publishedAt)}
+          </p>
           {post.featuredImage && (
-            <div className="relative h-96 w-full mb-8 rounded-lg overflow-hidden">
-              <Image src={post.featuredImage} alt={post.title} fill className="object-cover" priority />
-            </div>
+            <figure className="ind-blueprint ind-duotone relative m-0 mb-6">
+              <i className="ind-corner tl" />
+              <i className="ind-corner tr" />
+              <i className="ind-corner bl" />
+              <i className="ind-corner br" />
+              <div className="relative h-96 w-full">
+                <Image src={post.featuredImage} alt={post.title} fill className="object-cover" priority />
+              </div>
+            </figure>
           )}
           <div
-            className="prose prose-lg max-w-none prose-headings:font-serif prose-a:text-luxury-gold"
+            className="prose prose-lg max-w-none prose-headings:uppercase prose-headings:font-[var(--ind-font-heading)] prose-a:text-[var(--ind-color-accent)]"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
         </article>

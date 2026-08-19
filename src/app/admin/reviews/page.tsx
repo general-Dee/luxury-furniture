@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Star } from 'lucide-react'
 import { adminDb } from '@/lib/firebase/admin'
+import StarRating from '@/components/StarRating'
 import DeleteReviewButton from './DeleteReviewButton'
 
 export const dynamic = 'force-dynamic'
@@ -35,50 +35,56 @@ export default async function AdminReviewsPage() {
 
   return (
     <div>
-      <h2 className="text-xl font-serif mb-6">Reviews</h2>
-      <div className="border rounded-lg divide-y">
-        {reviews.map((review) => (
-          <div key={review.id} className="px-4 py-3">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                      />
-                    ))}
+      <h2 className="ind-scope uppercase text-xl mb-6">Reviews</h2>
+      {reviews.length === 0 ? (
+        <div className="ind-plate relative text-center p-6">
+          <i className="ind-corner ind-plate-corner tl" />
+          <i className="ind-corner ind-plate-corner tr" />
+          <i className="ind-corner ind-plate-corner bl" />
+          <i className="ind-corner ind-plate-corner br" />
+          <p className="opacity-60">No reviews yet.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {reviews.map((review) => (
+            <div key={review.id} className="ind-card ind-blueprint relative">
+              <i className="ind-corner tl" />
+              <i className="ind-corner tr" />
+              <i className="ind-corner bl" />
+              <i className="ind-corner br" />
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <StarRating rating={review.rating} size={14} />
+                    {productNames.has(review.productId) ? (
+                      <Link href={`/product/${review.productId}`} className="font-medium text-[var(--ind-color-accent)]">
+                        {productNames.get(review.productId)}
+                      </Link>
+                    ) : (
+                      <span className="font-mono text-xs opacity-50">{review.productId}</span>
+                    )}
                   </div>
-                  {productNames.has(review.productId) ? (
-                    <Link href={`/product/${review.productId}`} className="font-medium text-luxury-gold">
-                      {productNames.get(review.productId)}
-                    </Link>
-                  ) : (
-                    <span className="font-mono text-xs text-gray-400">{review.productId}</span>
+                  <p className="text-sm opacity-60 mb-1">
+                    {review.userName} {review.createdAt && `· ${review.createdAt}`}
+                  </p>
+                  {review.title && <p className="font-medium text-sm">{review.title}</p>}
+                  <p className="text-sm opacity-80 line-clamp-2">{review.comment}</p>
+                  {review.images.length > 0 && (
+                    <div className="flex gap-2 mt-2">
+                      {review.images.map((img, idx) => (
+                        <div key={idx} className="relative w-12 h-12 border border-[var(--ind-color-divider)] overflow-hidden">
+                          <Image src={img} alt="Review" fill className="object-cover" />
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
-                <p className="text-sm text-gray-500 mb-1">
-                  {review.userName} {review.createdAt && `· ${review.createdAt}`}
-                </p>
-                {review.title && <p className="font-medium text-sm">{review.title}</p>}
-                <p className="text-sm text-gray-700 line-clamp-2">{review.comment}</p>
-                {review.images.length > 0 && (
-                  <div className="flex gap-2 mt-2">
-                    {review.images.map((img, idx) => (
-                      <div key={idx} className="relative w-12 h-12 rounded border overflow-hidden">
-                        <Image src={img} alt="Review" fill className="object-cover" />
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <DeleteReviewButton id={review.id} />
               </div>
-              <DeleteReviewButton id={review.id} />
             </div>
-          </div>
-        ))}
-        {reviews.length === 0 && <p className="px-4 py-6 text-gray-500 text-sm">No reviews yet.</p>}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

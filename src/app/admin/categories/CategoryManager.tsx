@@ -46,7 +46,7 @@ export default function CategoryManager({ initialCategories }: { initialCategori
   }
 
   return (
-    <div className="max-w-md space-y-6">
+    <div className="ind-scope space-y-6" style={{ maxWidth: '420px' }}>
       <form onSubmit={handleAdd} className="flex gap-2">
         <input
           type="text"
@@ -54,18 +54,18 @@ export default function CategoryManager({ initialCategories }: { initialCategori
           onChange={(e) => setName(e.target.value)}
           placeholder="New category name"
           required
-          className="flex-1 border rounded px-3 py-2"
+          className="ind-input flex-1"
         />
-        <button type="submit" disabled={loading} className="bg-luxury-charcoal text-white px-4 py-2 rounded disabled:opacity-50">
+        <button type="submit" disabled={loading} className="ind-btn ind-btn-primary">
           Add
         </button>
       </form>
       {error && <p className="text-red-500 text-sm">{error}</p>}
-      <ul className="space-y-2">
+      <ul className="space-y-2 list-none m-0 p-0">
         {categories.map((cat) => (
-          <li key={cat.slug} className="flex justify-between items-center border rounded px-3 py-2">
+          <li key={cat.slug} className="ind-card flex-row justify-between items-center">
             <span>{cat.name}</span>
-            <button onClick={() => handleDelete(cat.slug)} className="text-xs text-red-600">Delete</button>
+            <button onClick={() => handleDelete(cat.slug)} className="ind-btn ind-btn-ghost">Delete</button>
           </li>
         ))}
       </ul>

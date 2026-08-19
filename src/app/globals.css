@@ -71,6 +71,209 @@
   }
 }
 
+/* ==== Industry design system (redesign) ====
+   Ported from design_handoff_luxury_furniture_redesign/industry-design-system/styles.css.
+   All classes/variables are `ind-`-prefixed so they can't collide with the
+   existing `luxury.*` tokens or `.btn-primary`/`.card-hover` used by pages
+   that haven't been redesigned yet. Apply `.ind-scope` to a redesigned
+   component's root element to opt its headings into Barlow Condensed —
+   needed because `h1..h6 { @apply font-serif }` above is global. */
+:root {
+  --ind-color-bg: #f2f2f3;
+  --ind-color-surface: #e9e9ea;
+  --ind-color-text: #1d1f20;
+  --ind-color-accent: #5980a6;
+  --ind-color-divider: color-mix(in srgb, #1d1f20 16%, transparent);
+
+  --ind-color-neutral-100: #f5f5f8;
+  --ind-color-neutral-200: #e7e7ea;
+  --ind-color-neutral-300: #d4d4d7;
+  --ind-color-neutral-400: #b7b7ba;
+  --ind-color-neutral-500: #98989b;
+  --ind-color-neutral-600: #7a7a7d;
+  --ind-color-neutral-700: #5d5d60;
+  --ind-color-neutral-800: #424244;
+  --ind-color-neutral-900: #2b2b2d;
+
+  --ind-color-accent-100: #eef6ff;
+  --ind-color-accent-200: #d6ebff;
+  --ind-color-accent-300: #b5d9fd;
+  --ind-color-accent-400: #94bce3;
+  --ind-color-accent-500: #749dc4;
+  --ind-color-accent-600: #597ea3;
+  --ind-color-accent-700: #416180;
+  --ind-color-accent-800: #2c455d;
+  --ind-color-accent-900: #1d2d3d;
+
+  --ind-font-heading: var(--font-barlow-condensed), system-ui, sans-serif;
+  --ind-font-body: var(--font-barlow), system-ui, sans-serif;
+
+  --ind-space-1: 3.4px;
+  --ind-space-2: 6.8px;
+  --ind-space-3: 10.2px;
+  --ind-space-4: 13.6px;
+  --ind-space-6: 20.4px;
+  --ind-space-8: 27.2px;
+
+  --ind-radius-sm: 2px;
+  --ind-radius-md: 4px;
+  --ind-radius-lg: 7px;
+
+  --ind-shadow-sm: 0 1px 2px color-mix(in srgb, #2b2b2d 14%, transparent);
+  --ind-shadow-md: 0 3px 10px color-mix(in srgb, #2b2b2d 16%, transparent);
+  --ind-shadow-lg: 0 12px 32px color-mix(in srgb, #2b2b2d 22%, transparent);
+}
+
+.ind-scope {
+  font-family: var(--ind-font-body);
+  color: var(--ind-color-text);
+}
+.ind-scope h1, .ind-scope h2, .ind-scope h3, .ind-scope h4, .ind-scope h5, .ind-scope h6 {
+  font-family: var(--ind-font-heading);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.ind-blueprint {
+  position: relative;
+  border: 1px solid var(--ind-color-divider);
+  border-radius: 0;
+}
+.ind-blueprint.ind-plate, .ind-blueprint.ind-duotone { overflow: visible; }
+.ind-corner {
+  position: absolute; width: 11px; height: 11px;
+  color: color-mix(in srgb, var(--ind-color-text) 55%, transparent);
+  pointer-events: none;
+}
+.ind-corner::before, .ind-corner::after { content: ""; position: absolute; background: currentColor; }
+.ind-corner::before { left: 5px; top: 0; width: 1px; height: 100%; }
+.ind-corner::after  { top: 5px; left: 0; width: 100%; height: 1px; }
+.ind-corner.tl { top: -6px; left: -6px; }
+.ind-corner.tr { top: -6px; right: -6px; }
+.ind-corner.bl { bottom: -6px; left: -6px; }
+.ind-corner.br { bottom: -6px; right: -6px; }
+.ind-plate-corner { width: 15px; height: 15px; }
+.ind-plate-corner.tl { top: -8px; left: -8px; }
+.ind-plate-corner.tr { top: -8px; right: -8px; }
+.ind-plate-corner.bl { bottom: -8px; left: -8px; }
+.ind-plate-corner.br { bottom: -8px; right: -8px; }
+
+.ind-duotone { position: relative; overflow: hidden; }
+.ind-duotone::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: var(--ind-color-accent); mix-blend-mode: color;
+}
+
+.ind-plate {
+  position: relative;
+  border: 1px solid var(--ind-color-divider);
+  border-radius: 0;
+}
+
+.ind-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--ind-font-heading); font-weight: 600;
+  font-size: 14px; line-height: 1.2; color: var(--ind-color-text);
+  background: transparent; border: 1px solid var(--ind-color-divider);
+  padding: var(--ind-space-2) calc(var(--ind-space-3) * 1.2);
+  border-radius: 0;
+}
+.ind-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.ind-btn-primary { background: var(--ind-color-accent); color: var(--ind-color-bg); border-color: var(--ind-color-accent); }
+.ind-btn-primary:hover { background: var(--ind-color-accent-600); }
+.ind-btn-primary:active { background: var(--ind-color-accent-700); }
+.ind-btn-secondary { border-color: var(--ind-color-divider); }
+.ind-btn-secondary:hover { background: color-mix(in srgb, var(--ind-color-text) 7%, transparent); }
+.ind-btn-ghost { color: var(--ind-color-accent); border-color: transparent; padding-inline: var(--ind-space-1); }
+.ind-btn-ghost:hover { background: color-mix(in srgb, var(--ind-color-accent) 10%, transparent); }
+.ind-btn-icon { width: 36px; height: 36px; padding: 0; }
+.ind-btn-block { width: 100%; }
+
+.ind-field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--ind-color-text) 70%, transparent);
+}
+.ind-input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--ind-color-text); caret-color: var(--ind-color-accent);
+  background: var(--ind-color-surface);
+  border: 1px solid var(--ind-color-divider); border-radius: 0;
+}
+.ind-input:hover { border-color: color-mix(in srgb, var(--ind-color-text) 45%, transparent); }
+.ind-input:focus-visible { outline: 2px solid var(--ind-color-accent); outline-offset: 0; border-color: var(--ind-color-accent); }
+.ind-radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.ind-radio input { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.ind-radio .ind-dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--ind-color-divider);
+}
+.ind-radio:hover .ind-dot { border-color: var(--ind-color-accent); }
+.ind-radio input:checked + .ind-dot {
+  border-color: var(--ind-color-accent); background: var(--ind-color-accent);
+  box-shadow: inset 0 0 0 4px var(--ind-color-bg);
+}
+
+.ind-card {
+  display: flex; flex-direction: column; gap: var(--ind-space-2);
+  border-radius: 0; background: transparent;
+  border: 1px solid var(--ind-color-divider);
+}
+.ind-card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ind-color-accent); }
+.ind-card-title {
+  font-family: var(--ind-font-heading); font-weight: 600;
+  font-size: 17px; line-height: 1.2;
+}
+.ind-card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.ind-card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--ind-color-text) 50%, transparent);
+}
+
+.ind-tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px; border-radius: 0;
+}
+.ind-tag-accent { background: var(--ind-color-accent-100); color: var(--ind-color-accent-800); }
+.ind-tag-neutral { background: var(--ind-color-neutral-100); color: var(--ind-color-neutral-800); }
+.ind-tag-outline { border: 1px solid var(--ind-color-accent); color: var(--ind-color-accent); }
+
+.ind-nav {
+  display: flex; align-items: center; gap: var(--ind-space-4);
+  padding: var(--ind-space-3) var(--ind-space-4);
+}
+.ind-nav-brand {
+  font-family: var(--ind-font-heading); font-weight: 600;
+  font-size: 18px; margin-right: auto;
+}
+.ind-nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.ind-nav a:hover, .ind-nav a[aria-current='page'] { color: var(--ind-color-accent); }
+
+.ind-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ind-table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--ind-color-text) 60%, transparent);
+  padding: var(--ind-space-2); border-bottom: 1px solid var(--ind-color-divider);
+}
+.ind-table td {
+  padding: var(--ind-space-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--ind-color-text) 8%, transparent);
+}
+.ind-table tbody tr:hover { background: color-mix(in srgb, var(--ind-color-text) 4%, transparent); }
+
+.ind-seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--ind-color-divider); border-radius: 0;
+}
+.ind-seg-opt {
+  display: inline-flex; align-items: center; padding: 7px 12px;
+  font-size: 13px; text-decoration: none; color: inherit; cursor: pointer;
+}
+.ind-seg-opt + .ind-seg-opt { border-left: 1px solid var(--ind-color-divider); }
+.ind-seg-opt:not(.ind-seg-opt-active):hover { background: color-mix(in srgb, var(--ind-color-text) 7%, transparent); }
+.ind-seg-opt-active { background: var(--ind-color-accent); color: var(--ind-color-bg); }
+
 /* ========== Kit Newsletter Form Styling ========== */
 [data-uid="55f59cd259"] form {
   display: flex;

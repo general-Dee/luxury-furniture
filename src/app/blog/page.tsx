@@ -29,43 +29,43 @@ export default async function BlogPage() {
   })
 
   return (
-    <main className="container-luxury py-12">
-      <h1 className="text-4xl font-serif text-center mb-4">Luxury Living Blog</h1>
-      <p className="text-center text-gray-600 mb-12">Insights, trends, and inspiration for your home</p>
+    <main className="ind-scope max-w-7xl mx-auto px-6 py-12">
+      <h1 className="uppercase text-4xl text-center mb-4">Luxury living blog</h1>
+      <p className="text-center opacity-70 mb-12">Insights, trends, and inspiration for your home</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main content */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 flex flex-col gap-6">
           {posts.map((post) => (
-            <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
-              <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
-                {post.featuredImage && (
-                  <div className="relative h-64 w-full">
-                    <Image
-                      src={post.featuredImage}
-                      alt={post.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                )}
-                <div className="p-6">
-                  <h2 className="text-2xl font-serif mb-2 group-hover:text-luxury-gold transition">
-                    {post.title}
-                  </h2>
-                  <p className="text-gray-500 text-sm mb-2">
-                    {post.publishedAt && formatDate(post.publishedAt)}
-                  </p>
-                  <p className="text-gray-600">
-                    {post.excerpt || post.content.replace(/<[^>]*>/g, '').slice(0, 150)}...
-                  </p>
+            <Link key={post.slug} href={`/blog/${post.slug}`} className="ind-card ind-blueprint relative !p-0 !gap-0">
+              <i className="ind-corner tl" />
+              <i className="ind-corner tr" />
+              <i className="ind-corner bl" />
+              <i className="ind-corner br" />
+              {post.featuredImage && (
+                <div className="ind-duotone relative w-full aspect-video border-b border-[var(--ind-color-divider)]">
+                  <Image
+                    src={post.featuredImage}
+                    alt={post.title}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
+              )}
+              <div className="p-6">
+                <h2 className="uppercase text-xl mb-2">
+                  {post.title}
+                </h2>
+                <p className="text-xs uppercase tracking-[0.06em] text-[var(--ind-color-accent-700)] mb-2">
+                  {post.publishedAt && formatDate(post.publishedAt)}
+                </p>
+                <p className="text-sm opacity-80">
+                  {post.excerpt || post.content.replace(/<[^>]*>/g, '').slice(0, 150)}...
+                </p>
               </div>
             </Link>
           ))}
         </div>
 
-        {/* Sidebar – only Recent Posts */}
         <div>
           <RecentPosts />
         </div>

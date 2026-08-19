@@ -23,27 +23,30 @@ export default async function RecentPosts() {
   })
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
-      <h3 className="text-xl font-serif mb-4">Recent Posts</h3>
+    <div className="ind-scope">
+      <div className="flex items-center gap-4 mb-4">
+        <span className="ind-card-kicker">Recent posts</span>
+        <div className="flex-1 border-t border-[var(--ind-color-divider)]" />
+      </div>
       <div className="space-y-4">
         {posts.map((post) => (
-          <Link key={post.slug} href={`/blog/${post.slug}`} className="group flex gap-3">
+          <Link key={post.slug} href={`/blog/${post.slug}`} className="flex gap-3">
             {post.featuredImage && (
-              <div className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden">
+              <div className="ind-duotone relative w-16 h-16 flex-shrink-0 border border-[var(--ind-color-divider)]">
                 <Image
                   src={post.featuredImage}
                   alt={post.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="object-cover"
                 />
               </div>
             )}
             <div>
-              <h4 className="font-serif text-gray-800 group-hover:text-luxury-gold transition line-clamp-2">
+              <h4 className="text-sm hover:text-[var(--ind-color-accent)] transition line-clamp-2">
                 {post.title}
               </h4>
               {post.publishedAt && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs opacity-60 mt-1">
                   {post.publishedAt.toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',

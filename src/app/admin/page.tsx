@@ -11,21 +11,37 @@ export default async function AdminDashboard() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
-      <Link href="/admin/products" className="border rounded-lg p-6 hover:shadow-md transition">
-        <p className="text-3xl font-serif">{productsCount}</p>
-        <p className="text-gray-500 text-sm mt-1">Products</p>
+      <Link href="/admin/products" className="ind-card ind-blueprint relative hover:!border-[var(--ind-color-accent)] transition">
+        <i className="ind-corner tl" />
+        <i className="ind-corner tr" />
+        <i className="ind-corner bl" />
+        <i className="ind-corner br" />
+        <p style={{ fontFamily: 'var(--ind-font-heading)', fontSize: '32px' }} className="m-0">{productsCount}</p>
+        <p className="opacity-70 text-sm mt-1">Products</p>
       </Link>
-      <Link href="/admin/categories" className="border rounded-lg p-6 hover:shadow-md transition">
-        <p className="text-3xl font-serif">{categoriesCount}</p>
-        <p className="text-gray-500 text-sm mt-1">Categories</p>
+      <Link href="/admin/categories" className="ind-card ind-blueprint relative hover:!border-[var(--ind-color-accent)] transition">
+        <i className="ind-corner tl" />
+        <i className="ind-corner tr" />
+        <i className="ind-corner bl" />
+        <i className="ind-corner br" />
+        <p style={{ fontFamily: 'var(--ind-font-heading)', fontSize: '32px' }} className="m-0">{categoriesCount}</p>
+        <p className="opacity-70 text-sm mt-1">Categories</p>
       </Link>
-      <Link href="/admin/orders?status=pending" className="border rounded-lg p-6 hover:shadow-md transition">
-        <p className="text-3xl font-serif">{pendingOrdersCount}</p>
-        <p className="text-gray-500 text-sm mt-1">Pending Orders</p>
+      <Link href="/admin/orders?status=pending" className="ind-card ind-blueprint relative hover:!border-[var(--ind-color-accent)] transition">
+        <i className="ind-corner tl" />
+        <i className="ind-corner tr" />
+        <i className="ind-corner bl" />
+        <i className="ind-corner br" />
+        <p style={{ fontFamily: 'var(--ind-font-heading)', fontSize: '32px' }} className="m-0">{pendingOrdersCount}</p>
+        <p className="opacity-70 text-sm mt-1">Pending orders</p>
       </Link>
-      <Link href="/admin/reviews" className="border rounded-lg p-6 hover:shadow-md transition">
-        <p className="text-3xl font-serif">{reviewsCount}</p>
-        <p className="text-gray-500 text-sm mt-1">Reviews</p>
+      <Link href="/admin/reviews" className="ind-card ind-blueprint relative hover:!border-[var(--ind-color-accent)] transition">
+        <i className="ind-corner tl" />
+        <i className="ind-corner tr" />
+        <i className="ind-corner bl" />
+        <i className="ind-corner br" />
+        <p style={{ fontFamily: 'var(--ind-font-heading)', fontSize: '32px' }} className="m-0">{reviewsCount}</p>
+        <p className="opacity-70 text-sm mt-1">Reviews</p>
       </Link>
     </div>
   )

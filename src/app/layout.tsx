@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Inter, Playfair_Display, Barlow, Barlow_Condensed } from 'next/font/google'
 import './globals.css'
 import { CartProvider } from '@/components/CartProvider'
 import Navbar from '@/components/Navbar'
@@ -11,6 +11,12 @@ import CartSync from '@/components/CartSync'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
+const barlow = Barlow({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--font-barlow' })
+const barlowCondensed = Barlow_Condensed({
+  subsets: ['latin'],
+  weight: ['400', '600'],
+  variable: '--font-barlow-condensed',
+})
 
 export const metadata: Metadata = {
   title: 'Luxury Furniture Nigeria | Timeless Elegance',
@@ -28,7 +34,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} font-sans`}>
+      <body className={`${inter.variable} ${playfair.variable} ${barlow.variable} ${barlowCondensed.variable} font-sans`}>
         <ThemeProvider>
           <CartProvider>
             <CartSync />

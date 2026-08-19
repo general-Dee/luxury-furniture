@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/industry-afb51b12-0766-4926-9a9e-0d7b024e05df/styles.css">
+  <script src="_ds/industry-afb51b12-0766-4926-9a9e-0d7b024e05df/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>
+    body { margin: 0; }
+    a { color: var(--color-accent-700); text-decoration: none; }
+    a:hover { color: var(--color-accent-900); }
+    * { box-sizing: border-box; }
+    .corner { position: absolute; width: 11px; height: 11px; color: color-mix(in srgb, var(--color-text) 55%, transparent); pointer-events: none; }
+    .corner::before { content: ""; position: absolute; left: 5px; top: 0; width: 1px; height: 100%; background: currentColor; }
+    .corner::after { content: ""; position: absolute; top: 5px; left: 0; width: 100%; height: 1px; background: currentColor; }
+    .corner.tl { top: -6px; left: -6px; } .corner.tr { top: -6px; right: -6px; }
+    .corner.bl { bottom: -6px; left: -6px; } .corner.br { bottom: -6px; right: -6px; }
+    .plate-corner { width: 15px; height: 15px; }
+    .plate-corner.tl { top: -8px; left: -8px; } .plate-corner.tr { top: -8px; right: -8px; }
+    .plate-corner.bl { bottom: -8px; left: -8px; } .plate-corner.br { bottom: -8px; right: -8px; }
+    .navlink { cursor: pointer; }
+  </style>
+</helmet>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-divider);padding:var(--space-3) var(--space-6);position:sticky;top:0;background:var(--color-bg);z-index:10;">
+  <span class="nav-brand navlink" onClick="{{ goHome }}">Luxury Furniture</span>
+  <span class="navlink" onClick="{{ goHome }}">Living Room</span>
+  <span class="navlink" onClick="{{ goHome }}">Bedroom</span>
+  <span class="navlink" onClick="{{ goHome }}">Office</span>
+  <span class="navlink" onClick="{{ goSale }}">Sale</span>
+  <span class="navlink" onClick="{{ goBlog }}">Blog</span>
+  <span class="navlink" onClick="{{ goWishlist }}">Wishlist</span>
+  <span class="navlink" onClick="{{ goOrders }}">Orders</span>
+  <span class="navlink" onClick="{{ goAccount }}">Account</span>
+  <span class="navlink" onClick="{{ goAdmin }}">Admin</span>
+  <div style="position:relative;display:flex;align-items:center;margin-left:var(--space-4);cursor:pointer;" onClick="{{ goCart }}">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 21v-6"/></svg>
+    <span style="position:absolute;top:-7px;right:-9px;background:var(--color-accent);color:var(--color-bg);font-size:10px;height:16px;width:16px;display:flex;align-items:center;justify-content:center;">{{ cartCount }}</span>
+  </div>
+  <button type="button" class="btn btn-secondary" onClick="{{ goLogin }}">Login</button>
+  <button type="button" class="btn btn-primary" onClick="{{ goSignup }}">Sign Up</button>
+</nav>
+
+<main>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div>
+  <section style="padding:calc(4*var(--space-8)) var(--space-6) calc(3*var(--space-8));display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:var(--space-8);align-items:center;max-width:1280px;margin:0 auto;">
+    <div>
+      <span class="tag tag-outline">Est. drawing set 04</span>
+      <h1 style="text-transform:uppercase;margin-top:var(--space-3);font-size:clamp(40px,6vw,68px);line-height:1.03;letter-spacing:0.01em;">Furniture, specified<br/>to the millimetre.</h1>
+      <p style="max-width:52ch;font-size:16px;color:color-mix(in srgb, var(--color-text) 78%, transparent);margin-top:var(--space-4);">Every piece drawn before it's built: frame stock, joinery, upholstery weight and finish, all on record. Handcrafted, load-tested, delivered across Nigeria.</p>
+      <div style="display:flex;gap:var(--space-3);margin-top:var(--space-6);">
+        <button type="button" class="btn btn-primary" onClick="{{ scrollToProducts }}">Explore the catalog</button>
+        <button type="button" class="btn btn-ghost" onClick="{{ goSignup }}">Request the spec book</button>
+      </div>
+    </div>
+    <figure class="blueprint duotone" style="margin:0;position:relative;">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <image-slot id="hero-img" shape="rect" placeholder="Showroom photograph, duotoned" src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1600" credit="Photo by Spacejoy on Unsplash" credit-href="https://unsplash.com/@spacejoy" style="width:100%;aspect-ratio:4/3;"></image-slot>
+    </figure>
+  </section>
+
+  <div id="products-section" style="max-width:1280px;margin:0 auto;padding:0 var(--space-6) var(--space-8);">
+    <div class="plate" style="position:relative;border:1px solid var(--color-divider);margin-bottom:var(--space-8);">
+      <i class="corner plate-corner tl"></i><i class="corner plate-corner tr"></i><i class="corner plate-corner bl"></i><i class="corner plate-corner br"></i>
+      <header style="display:flex;flex-wrap:wrap;border-bottom:1px solid var(--color-divider);">
+        <span style="flex:1;min-width:16ch;padding:var(--space-2) var(--space-6);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;">Filter the catalog</span>
+        <span style="border-left:1px solid var(--color-divider);padding:var(--space-2) var(--space-6);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:color-mix(in srgb, var(--color-text) 70%, transparent);">DOC HF-100</span>
+      </header>
+      <div style="display:grid;grid-template-columns:2fr 1.2fr 1fr;gap:var(--space-6);padding:var(--space-6);">
+        <div class="field">
+          <label>Search</label>
+          <input class="input" type="text" placeholder="e.g., velvet sofa"/>
+        </div>
+        <div class="field">
+          <label>Sort by</label>
+          <select class="input">
+            <option>Newest first</option>
+            <option>Price: low to high</option>
+            <option>Price: high to low</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:var(--space-3);">
+          <label class="radio"><input type="checkbox"/><span class="dot"></span>In stock only</label>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--color-divider);padding:var(--space-4) var(--space-6);display:flex;align-items:center;gap:var(--space-6);">
+        <span style="font-size:12px;color:color-mix(in srgb, var(--color-text) 70%, transparent);white-space:nowrap;">Price range</span>
+        <span style="font-family:var(--font-heading);font-size:16px;">₦200,000</span>
+        <input type="range" style="flex:1;accent-color:var(--color-accent);"/>
+        <span style="font-family:var(--font-heading);font-size:16px;">₦7,000,000</span>
+        <button type="button" class="btn btn-ghost">Clear filters</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:var(--space-3);margin-bottom:var(--space-6);">
+      <sc-for list="{{ categoryPills }}" as="cat" hint-placeholder-count="4">
+        <span class="tag {{ cat.cls }}" style="cursor:pointer;padding:6px 16px;font-size:13px;">{{ cat.label }}</span>
+      </sc-for>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-8);">
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+        <div class="card" style="position:relative;padding:0;gap:0;cursor:pointer;" onClick="{{ goProduct }}">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <figure class="duotone" style="margin:0;position:relative;border-bottom:1px solid var(--color-divider);">
+            <image-slot id="prod-{{ p.id }}" shape="rect" placeholder="{{ p.name }}" style="width:100%;aspect-ratio:4/3;"></image-slot>
+          </figure>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-2);">
+            <span class="card-kicker">{{ p.category }}</span>
+            <h3 class="card-title">{{ p.name }}</h3>
+            <p class="card-body">{{ p.description }}</p>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:var(--space-2);">
+              <span style="font-family:var(--font-heading);font-weight:600;font-size:20px;color:var(--color-accent-700);">₦{{ p.priceFmt }}</span>
+              <button type="button" class="btn btn-primary" onClick="{{ addToCart }}">Add</button>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isProduct }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <a href="#" onClick="{{ goHome }}" style="font-size:13px;display:inline-block;margin-bottom:var(--space-4);">&larr; All products</a>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-8);">
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <figure class="blueprint duotone" style="margin:0;position:relative;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <image-slot id="pd-main" shape="rect" placeholder="Velvet Chesterfield Sofa" style="width:100%;aspect-ratio:4/3;"></image-slot>
+      </figure>
+      <figure class="blueprint duotone" style="margin:0;position:relative;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <image-slot id="pd-alt" shape="rect" placeholder="Side view" style="width:100%;aspect-ratio:4/3;"></image-slot>
+      </figure>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <span class="tag tag-accent">Living Room</span>
+      <h1 style="text-transform:uppercase;margin:0;font-size:36px;">Velvet Chesterfield Sofa</h1>
+      <p style="font-family:var(--font-heading);font-weight:600;font-size:30px;color:var(--color-accent-700);margin:0;">₦2,450,000</p>
+      <div style="display:flex;align-items:center;gap:var(--space-2);">
+        <div style="display:flex;">
+          <sc-for list="{{ pdStars }}" as="s" hint-placeholder-count="5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ s.fill }}" stroke="{{ s.stroke }}" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01z"/></svg>
+          </sc-for>
+        </div>
+        <span style="font-size:13px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">4.6 out of 5 · 3 reviews</span>
+      </div>
+      <p style="font-size:16px;line-height:1.7;color:color-mix(in srgb, var(--color-text) 85%, transparent);margin:0;">Hand-tufted velvet upholstery on a solid oak frame. Deep-buttoned back cushions and rolled arms give this piece its classic Chesterfield silhouette, finished with bracket feet in dark walnut.</p>
+      <button type="button" class="btn btn-primary btn-block" style="font-size:16px;padding:var(--space-3);" onClick="{{ addToCartFromProduct }}">Add to cart — ₦2,450,000</button>
+
+      <div class="plate" style="position:relative;border:1px solid var(--color-divider);margin-top:var(--space-4);">
+        <i class="corner plate-corner tl"></i><i class="corner plate-corner tr"></i><i class="corner plate-corner bl"></i><i class="corner plate-corner br"></i>
+        <table class="table" style="margin:0;">
+          <tbody>
+            <tr><td style="color:color-mix(in srgb, var(--color-text) 70%, transparent);width:40%;">Frame</td><td>Solid oak</td></tr>
+            <tr><td style="color:color-mix(in srgb, var(--color-text) 70%, transparent);">Upholstery</td><td>Velvet, hand-tufted</td></tr>
+            <tr><td style="color:color-mix(in srgb, var(--color-text) 70%, transparent);">Dimensions</td><td>220 × 95 × 80 cm</td></tr>
+            <tr><td style="color:color-mix(in srgb, var(--color-text) 70%, transparent);border-bottom:none;">Lead time</td><td style="border-bottom:none;">3–4 weeks</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:var(--space-8);">
+    <span class="kicker" style="display:block;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:var(--color-accent-700);margin-bottom:var(--space-2);">Customer reviews</span>
+    <hr class="hr" style="margin:0 0 var(--space-4);"/>
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="3">
+        <div style="border-bottom:1px solid var(--color-divider);padding-bottom:var(--space-4);">
+          <div style="display:flex;align-items:center;gap:var(--space-2);margin-bottom:4px;">
+            <div style="display:flex;">
+              <sc-for list="{{ r.stars }}" as="s" hint-placeholder-count="5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="{{ s.fill }}" stroke="{{ s.stroke }}" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01z"/></svg>
+              </sc-for>
+            </div>
+            <span style="font-weight:600;font-size:14px;">{{ r.userName }}</span>
+            <span style="font-size:13px;color:color-mix(in srgb, var(--color-text) 60%, transparent);">{{ r.date }}</span>
+          </div>
+          <p style="margin:0;font-size:14px;color:color-mix(in srgb, var(--color-text) 85%, transparent);">{{ r.comment }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCart }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <h1 style="text-transform:uppercase;margin:0 0 var(--space-6);font-size:30px;">Shopping cart</h1>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-6);">
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <sc-for list="{{ cartItems }}" as="c" hint-placeholder-count="3">
+        <div class="card" style="flex-direction:row;position:relative;padding:var(--space-4);gap:var(--space-4);align-items:center;">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <figure class="duotone" style="margin:0;width:100px;height:100px;flex-shrink:0;cursor:pointer;" onClick="{{ goProduct }}">
+            <image-slot id="cart-{{ c.id }}" shape="rect" placeholder="{{ c.name }}" style="width:100%;height:100%;"></image-slot>
+          </figure>
+          <div style="flex:1;">
+            <h3 class="card-title" style="margin-bottom:4px;">{{ c.name }}</h3>
+            <p style="color:var(--color-accent-700);font-weight:600;margin:0 0 var(--space-2);font-family:var(--font-heading);">₦{{ c.priceFmt }}</p>
+            <div style="display:flex;align-items:center;gap:var(--space-2);">
+              <button type="button" class="btn btn-secondary btn-icon">–</button>
+              <span style="width:28px;text-align:center;font-size:14px;">{{ c.qty }}</span>
+              <button type="button" class="btn btn-secondary btn-icon">+</button>
+              <button type="button" class="btn btn-ghost" style="margin-left:var(--space-3);">Remove</button>
+            </div>
+          </div>
+          <p style="font-weight:600;font-size:17px;margin:0;font-family:var(--font-heading);">₦{{ c.lineTotalFmt }}</p>
+        </div>
+      </sc-for>
+    </div>
+    <div class="card" style="position:relative;height:fit-content;">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h2 class="card-title" style="font-size:19px;">Order summary</h2>
+      <div style="display:flex;flex-direction:column;gap:var(--space-2);border-bottom:1px solid var(--color-divider);padding-bottom:var(--space-3);">
+        <div style="display:flex;justify-content:space-between;font-size:14px;"><span>Subtotal</span><span>₦{{ cartTotalFmt }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:color-mix(in srgb, var(--color-text) 60%, transparent);"><span>Shipping</span><span>Calculated at checkout</span></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-weight:600;font-size:18px;margin-top:var(--space-3);font-family:var(--font-heading);"><span>Total</span><span>₦{{ cartTotalFmt }}</span></div>
+      <button type="button" class="btn btn-primary btn-block" onClick="{{ goCheckout }}">Proceed to checkout</button>
+      <button type="button" class="btn btn-ghost btn-block" onClick="{{ goHome }}">Continue shopping</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:640px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <a href="#" onClick="{{ goCart }}" style="font-size:13px;display:inline-block;margin-bottom:var(--space-4);">&larr; Back to cart</a>
+  <h1 style="text-transform:uppercase;text-align:center;margin:0 0 var(--space-6);font-size:34px;">Checkout</h1>
+  <div class="card" style="position:relative;padding:var(--space-6);">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <div class="field"><label>Email</label><input class="input" type="email" placeholder="you@example.com"/></div>
+      <div class="field"><label>Phone</label><input class="input" type="tel" placeholder="0803 123 4567"/></div>
+      <div class="field"><label>Address</label><input class="input" type="text" placeholder="Street, building, etc."/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+        <div class="field"><label>City</label><input class="input" type="text" placeholder="Lagos"/></div>
+        <div class="field"><label>State</label><input class="input" type="text" placeholder="Lagos"/></div>
+      </div>
+      <hr class="hr"/>
+      <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:600;font-family:var(--font-heading);">
+        <span>Total</span><span style="color:var(--color-accent-700);">₦{{ cartTotalFmt }}</span>
+      </div>
+      <button type="button" class="btn btn-primary btn-block" style="padding:var(--space-3);font-size:15px;" onClick="{{ completeOrder }}">Pay with Paystack</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:var(--space-8) var(--space-4);">
+  <div style="max-width:380px;width:100%;display:flex;flex-direction:column;gap:var(--space-6);">
+    <h2 style="text-transform:uppercase;text-align:center;margin:0;font-size:26px;">Sign in to your account</h2>
+    <div class="card" style="position:relative;padding:var(--space-6);">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+        <div class="field"><label>Email address</label><input class="input" type="email" placeholder="you@example.com"/></div>
+        <div class="field"><label>Password</label><input class="input" type="password" placeholder="••••••••"/></div>
+        <button type="button" class="btn btn-primary btn-block" onClick="{{ goAccount }}">Sign in</button>
+        <div style="text-align:center;font-size:13px;">
+          <a href="#" onClick="{{ goSignup }}">Don't have an account? Sign up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:var(--space-8) var(--space-4);">
+  <div style="max-width:380px;width:100%;display:flex;flex-direction:column;gap:var(--space-6);">
+    <h2 style="text-transform:uppercase;text-align:center;margin:0;font-size:26px;">Create your account</h2>
+    <div class="card" style="position:relative;padding:var(--space-6);">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+        <div class="field"><label>Email address</label><input class="input" type="email" placeholder="you@example.com"/></div>
+        <div class="field"><label>Password</label><input class="input" type="password" placeholder="Min. 6 characters"/></div>
+        <button type="button" class="btn btn-primary btn-block" onClick="{{ goAccount }}">Sign up</button>
+        <div style="text-align:center;font-size:13px;"><a href="#" onClick="{{ goLogin }}">Already have an account? Sign in</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isWishlist }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <h1 style="text-transform:uppercase;margin:0 0 var(--space-6);font-size:30px;">Your wishlist</h1>
+  <sc-if value="{{ hasWishlist }}" hint-placeholder-val="{{ true }}">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-8);">
+      <sc-for list="{{ wishlistItems }}" as="p" hint-placeholder-count="4">
+        <div class="card" style="position:relative;padding:0;gap:0;cursor:pointer;" onClick="{{ goProduct }}">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <figure class="duotone" style="margin:0;position:relative;border-bottom:1px solid var(--color-divider);">
+            <image-slot id="wish-{{ p.id }}" shape="rect" placeholder="{{ p.name }}" style="width:100%;aspect-ratio:4/3;"></image-slot>
+          </figure>
+          <div style="padding:var(--space-4);">
+            <h3 class="card-title" style="margin-bottom:4px;">{{ p.name }}</h3>
+            <p style="color:var(--color-accent-700);font-weight:600;margin:0;font-family:var(--font-heading);">₦{{ p.priceFmt }}</p>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasNoWishlist }}" hint-placeholder-val="{{ false }}">
+    <div class="plate" style="position:relative;border:1px solid var(--color-divider);padding:calc(3*var(--space-8)) var(--space-6);text-align:center;">
+      <i class="corner plate-corner tl"></i><i class="corner plate-corner tr"></i><i class="corner plate-corner bl"></i><i class="corner plate-corner br"></i>
+      <p style="color:color-mix(in srgb, var(--color-text) 65%, transparent);margin:0 0 var(--space-4);">You haven't saved any products yet.</p>
+      <button type="button" class="btn btn-primary" onClick="{{ goHome }}">Start shopping</button>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isOrders }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:960px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <h1 style="text-transform:uppercase;margin:0 0 var(--space-6);font-size:30px;">My orders</h1>
+  <sc-if value="{{ hasOrders }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <sc-for list="{{ orderList }}" as="o" hint-placeholder-count="4">
+        <div class="card" style="flex-direction:row;position:relative;justify-content:space-between;align-items:center;">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div>
+            <p style="font-weight:600;margin:0 0 4px;font-family:var(--font-heading);">Order #{{ o.shortId }}</p>
+            <p style="font-size:13px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin:0;">{{ o.date }}</p>
+          </div>
+          <div style="text-align:right;">
+            <p style="font-weight:600;margin:0 0 4px;font-family:var(--font-heading);">₦{{ o.totalFmt }}</p>
+            <span class="tag" style="background:{{ o.tagBg }};color:{{ o.tagColor }};">{{ o.statusLabel }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasNoOrders }}" hint-placeholder-val="{{ false }}">
+    <div class="plate" style="position:relative;border:1px solid var(--color-divider);padding:calc(3*var(--space-8)) var(--space-6);text-align:center;">
+      <i class="corner plate-corner tl"></i><i class="corner plate-corner tr"></i><i class="corner plate-corner bl"></i><i class="corner plate-corner br"></i>
+      <p style="color:color-mix(in srgb, var(--color-text) 65%, transparent);margin:0;">You haven't placed any orders yet.</p>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAccount }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:900px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <h1 style="text-transform:uppercase;margin:0 0 var(--space-6);font-size:30px;">My account</h1>
+  <div class="card" style="position:relative;margin-bottom:var(--space-6);">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <h2 class="card-title" style="font-size:18px;">Profile info</h2>
+    <p style="margin:0 0 var(--space-4);font-size:14px;">Email: adaeze.okafor@example.com</p>
+    <div style="display:flex;gap:var(--space-3);">
+      <button type="button" class="btn btn-secondary" onClick="{{ goWishlist }}">View wishlist</button>
+      <button type="button" class="btn btn-secondary" onClick="{{ goOrders }}">View orders</button>
+    </div>
+  </div>
+  <div class="card" style="position:relative;">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <h2 class="card-title" style="font-size:18px;">Saved addresses</h2>
+    <p style="color:color-mix(in srgb, var(--color-text) 65%, transparent);font-size:14px;margin:0 0 var(--space-4);">No addresses saved yet.</p>
+    <button type="button" class="btn btn-secondary">+ Add address</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBlog }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <h1 style="text-transform:uppercase;text-align:center;margin:0 0 var(--space-2);font-size:36px;">Luxury living blog</h1>
+  <p style="text-align:center;color:color-mix(in srgb, var(--color-text) 78%, transparent);margin:0 0 var(--space-8);">Insights, trends, and inspiration for your home</p>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-8);">
+    <div style="display:flex;flex-direction:column;gap:var(--space-6);">
+      <sc-for list="{{ blogPosts }}" as="post" hint-placeholder-count="3">
+        <div class="card" style="position:relative;padding:0;gap:0;cursor:pointer;" onClick="{{ goBlogPost }}">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <figure class="duotone" style="margin:0;position:relative;border-bottom:1px solid var(--color-divider);">
+            <image-slot id="blog-{{ post.id }}" shape="rect" placeholder="{{ post.title }}" style="width:100%;aspect-ratio:16/9;"></image-slot>
+          </figure>
+          <div style="padding:var(--space-6);">
+            <h2 style="text-transform:uppercase;font-size:22px;margin:0 0 var(--space-2);">{{ post.title }}</h2>
+            <p style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-accent-700);margin:0 0 var(--space-2);">{{ post.date }}</p>
+            <p style="color:color-mix(in srgb, var(--color-text) 78%, transparent);margin:0;font-size:14px;">{{ post.excerpt }}</p>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div>
+      <span style="display:block;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:var(--color-accent-700);margin-bottom:var(--space-2);">Recent posts</span>
+      <hr class="hr" style="margin:0 0 var(--space-4);"/>
+      <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+        <sc-for list="{{ blogPosts }}" as="rp" hint-placeholder-count="3">
+          <a href="#" onClick="{{ goBlogPost }}" style="font-size:14px;display:block;">{{ rp.title }}</a>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBlogPost }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <a href="#" onClick="{{ goBlog }}" style="font-size:13px;display:inline-block;margin-bottom:var(--space-4);">&larr; All posts</a>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-8);">
+    <article>
+      <h1 style="text-transform:uppercase;font-size:40px;margin:0 0 var(--space-3);">Choosing the right sofa fabric for Lagos humidity</h1>
+      <p style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-accent-700);margin:0 0 var(--space-6);">August 3, 2026</p>
+      <figure class="blueprint duotone" style="margin:0 0 var(--space-6);position:relative;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <image-slot id="blogpost-main" shape="rect" placeholder="Choosing the Right Sofa Fabric for Lagos Humidity" style="width:100%;aspect-ratio:16/9;"></image-slot>
+      </figure>
+      <div style="font-size:16px;line-height:1.7;display:flex;flex-direction:column;gap:var(--space-4);color:color-mix(in srgb, var(--color-text) 88%, transparent);">
+        <p style="margin:0;">Humidity changes everything about how upholstery ages. Velvet and heavy linen hold moisture longer than performance weaves, which matters more in Lagos than in a showroom in London.</p>
+        <p style="margin:0;">We recommend a tightly woven polyester-blend velvet for statement pieces, and a treated leather or leatherette for anything near a window.</p>
+      </div>
+    </article>
+    <aside>
+      <span style="display:block;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:var(--color-accent-700);margin-bottom:var(--space-2);">Recent posts</span>
+      <hr class="hr" style="margin:0 0 var(--space-4);"/>
+      <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+        <sc-for list="{{ blogPosts }}" as="rp2" hint-placeholder-count="3">
+          <a href="#" onClick="{{ goBlogPost }}" style="font-size:14px;display:block;">{{ rp2.title }}</a>
+        </sc-for>
+      </div>
+    </aside>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSale }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <h1 style="text-transform:uppercase;margin:0 0 var(--space-2);font-size:30px;">Sale</h1>
+  <p style="color:color-mix(in srgb, var(--color-text) 78%, transparent);margin:0 0 var(--space-6);">Limited-time offers on selected pieces</p>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-8);">
+    <sc-for list="{{ saleProducts }}" as="p2" hint-placeholder-count="4">
+      <div class="card" style="position:relative;padding:0;gap:0;cursor:pointer;" onClick="{{ goProduct }}">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <figure class="duotone" style="margin:0;position:relative;border-bottom:1px solid var(--color-divider);">
+          <image-slot id="sale-{{ p2.id }}" shape="rect" placeholder="{{ p2.name }}" style="width:100%;aspect-ratio:4/3;"></image-slot>
+        </figure>
+        <div style="padding:var(--space-4);">
+          <h3 class="card-title" style="margin-bottom:6px;">{{ p2.name }}</h3>
+          <div style="display:flex;gap:var(--space-2);align-items:center;">
+            <span style="color:color-mix(in srgb, var(--color-text) 55%, transparent);text-decoration:line-through;font-size:13px;">₦{{ p2.origFmt }}</span>
+            <span style="color:var(--color-accent-700);font-weight:600;font-family:var(--font-heading);">₦{{ p2.priceFmt }}</span>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <dc-import name="AdminNav" active="dashboard" nav="{{ setAdminScreen }}" hint-size="100%,60px"></dc-import>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-6);">
+    <div class="card" style="position:relative;cursor:pointer;" onClick="{{ goAdminProducts }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><p style="font-family:var(--font-heading);font-size:32px;margin:0;">128</p><p style="color:color-mix(in srgb, var(--color-text) 70%, transparent);font-size:13px;margin-top:4px;">Products</p></div>
+    <div class="card" style="position:relative;cursor:pointer;" onClick="{{ goAdminCategories }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><p style="font-family:var(--font-heading);font-size:32px;margin:0;">6</p><p style="color:color-mix(in srgb, var(--color-text) 70%, transparent);font-size:13px;margin-top:4px;">Categories</p></div>
+    <div class="card" style="position:relative;cursor:pointer;" onClick="{{ goAdminOrders }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><p style="font-family:var(--font-heading);font-size:32px;margin:0;">4</p><p style="color:color-mix(in srgb, var(--color-text) 70%, transparent);font-size:13px;margin-top:4px;">Pending orders</p></div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAdminProducts }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <dc-import name="AdminNav" active="products" nav="{{ setAdminScreen }}" hint-size="100%,60px"></dc-import>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-6);">
+    <h2 style="text-transform:uppercase;margin:0;font-size:20px;">Products</h2>
+    <button type="button" class="btn btn-primary">+ New product</button>
+  </div>
+  <sc-if value="{{ hasAdminProducts }}" hint-placeholder-val="{{ true }}">
+    <table class="table">
+      <thead><tr><th>Name</th><th>Price</th><th>Stock</th><th></th></tr></thead>
+      <tbody>
+        <sc-for list="{{ adminProducts }}" as="ap" hint-placeholder-count="5">
+          <tr>
+            <td>{{ ap.name }}</td>
+            <td>₦{{ ap.priceFmt }}<span style="color:var(--color-accent-700);"> {{ ap.inactiveLabel }}</span></td>
+            <td>{{ ap.stock }}</td>
+            <td style="text-align:right;"><a href="#">Edit</a><button type="button" class="btn btn-ghost" style="margin-left:var(--space-3);">Delete</button></td>
+          </tr>
+        </sc-for>
+      </tbody>
+    </table>
+  </sc-if>
+  <sc-if value="{{ hasNoAdminProducts }}" hint-placeholder-val="{{ false }}">
+    <div class="plate" style="position:relative;border:1px solid var(--color-divider);padding:var(--space-6);text-align:center;">
+      <i class="corner plate-corner tl"></i><i class="corner plate-corner tr"></i><i class="corner plate-corner bl"></i><i class="corner plate-corner br"></i>
+      <p style="color:color-mix(in srgb, var(--color-text) 65%, transparent);margin:0;">No products yet.</p>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAdminOrders }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <dc-import name="AdminNav" active="orders" nav="{{ setAdminScreen }}" hint-size="100%,60px"></dc-import>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-6);">
+    <h2 style="text-transform:uppercase;margin:0;font-size:20px;">Orders</h2>
+    <div class="seg">
+      <label class="seg-opt"><input type="radio" name="ostatus" checked/>All</label>
+      <label class="seg-opt"><input type="radio" name="ostatus"/>Pending</label>
+      <label class="seg-opt"><input type="radio" name="ostatus"/>Paid</label>
+      <label class="seg-opt"><input type="radio" name="ostatus"/>Failed</label>
+    </div>
+  </div>
+  <sc-if value="{{ hasAdminOrders }}" hint-placeholder-val="{{ true }}">
+    <table class="table">
+      <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
+      <tbody>
+        <sc-for list="{{ adminOrders }}" as="ao" hint-placeholder-count="4">
+          <tr>
+            <td>#{{ ao.shortId }}</td>
+            <td>{{ ao.email }}</td>
+            <td>{{ ao.itemCount }}</td>
+            <td>₦{{ ao.totalFmt }}</td>
+            <td><span class="tag" style="background:{{ ao.tagBg }};color:{{ ao.tagColor }};">{{ ao.statusLabel }}</span></td>
+          </tr>
+        </sc-for>
+      </tbody>
+    </table>
+  </sc-if>
+  <sc-if value="{{ hasNoAdminOrders }}" hint-placeholder-val="{{ false }}">
+    <div class="plate" style="position:relative;border:1px solid var(--color-divider);padding:var(--space-6);text-align:center;">
+      <i class="corner plate-corner tl"></i><i class="corner plate-corner tr"></i><i class="corner plate-corner bl"></i><i class="corner plate-corner br"></i>
+      <p style="color:color-mix(in srgb, var(--color-text) 65%, transparent);margin:0;">No orders yet.</p>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAdminCategories }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+  <dc-import name="AdminNav" active="categories" nav="{{ setAdminScreen }}" hint-size="100%,60px"></dc-import>
+  <h2 style="text-transform:uppercase;margin:0 0 var(--space-6);font-size:20px;">Categories</h2>
+  <div style="max-width:420px;display:flex;flex-direction:column;gap:var(--space-4);">
+    <div style="display:flex;gap:var(--space-2);">
+      <input class="input" type="text" placeholder="New category name" style="flex:1;"/>
+      <button type="button" class="btn btn-primary">Add</button>
+    </div>
+    <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--space-2);">
+      <sc-for list="{{ categoryList }}" as="c" hint-placeholder-count="6">
+        <li class="card" style="flex-direction:row;justify-content:space-between;align-items:center;">
+          <span>{{ c.name }}</span>
+          <button type="button" class="btn btn-ghost">Delete</button>
+        </li>
+      </sc-for>
+    </ul>
+  </div>
+</div>
+</sc-if>
+
+</main>
+
+<footer style="border-top:1px solid var(--color-divider);padding:var(--space-6);text-align:center;font-size:13px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">
+  © 2026 Luxury Furniture Nigeria. Furniture, specified to the millimetre.
+</footer>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;demoEmptyStates&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Demo&quot;}}">
+function fmt(n) { return n.toLocaleString('en-US'); }
+
+const STATUS_TAG = {
+  pending: { bg: 'var(--color-accent-2-100)', color: 'var(--color-accent-2-800)', label: 'PENDING' },
+  paid: { bg: 'var(--color-accent-100)', color: 'var(--color-accent-800)', label: 'PAID' },
+  failed: { bg: 'var(--color-neutral-200)', color: 'var(--color-neutral-800)', label: 'FAILED' },
+  cancelled: { bg: 'var(--color-neutral-100)', color: 'var(--color-neutral-700)', label: 'CANCELLED' },
+};
+
+class Component extends DCLogic {
+  state = { screen: 'home', cartCount: 3 };
+
+  renderVals() {
+    const screen = this.state.screen;
+    const go = (s) => () => { this.setState({ screen: s }); window.scrollTo(0, 0); };
+
+    const categoryPills = [
+      { label: 'All', cls: 'tag-accent' },
+      { label: 'Living Room', cls: 'tag-outline' },
+      { label: 'Bedroom', cls: 'tag-outline' },
+      { label: 'Office', cls: 'tag-outline' },
+    ];
+
+    const rawProducts = [
+      { id: 1, name: 'Velvet Chesterfield Sofa', category: 'Living Room', price: 2450000, description: 'Hand-tufted velvet upholstery on a solid oak frame.' },
+      { id: 2, name: 'Marble-Top Coffee Table', category: 'Living Room', price: 980000, description: 'Italian marble top with brushed brass legs.' },
+      { id: 3, name: 'Emperor Upholstered Bed Frame', category: 'Bedroom', price: 3200000, description: 'King-size frame in bouclé fabric with channel-tufted headboard.' },
+      { id: 4, name: 'Walnut Nightstand Pair', category: 'Bedroom', price: 640000, description: 'Set of two, hand-finished walnut veneer.' },
+      { id: 5, name: 'Executive Leather Desk', category: 'Office', price: 2100000, description: 'Full-grain leather top on a powder-coated steel base.' },
+      { id: 6, name: 'Ergonomic Mesh Chair', category: 'Office', price: 780000, description: 'Breathable mesh back with adjustable lumbar support.' },
+      { id: 7, name: 'Rattan Accent Armchair', category: 'Living Room', price: 560000, description: 'Handwoven rattan frame with removable cushion.' },
+      { id: 8, name: 'Solid Oak Wardrobe', category: 'Bedroom', price: 4600000, description: 'Three-door wardrobe with soft-close hinges.' },
+    ];
+    const products = rawProducts.map(p => ({ ...p, priceFmt: fmt(p.price) }));
+
+    const starRow = (rating) => [0,1,2,3,4].map(i => ({
+      fill: i < rating ? 'var(--color-accent)' : 'none',
+      stroke: i < rating ? 'var(--color-accent)' : 'var(--color-divider)',
+    }));
+
+    const reviews = [
+      { userName: 'Amaka O.', date: 'Jul 12, 2026', comment: 'The velvet is even richer in person and the frame feels rock solid. Delivery in Lagos was smooth.', stars: starRow(5) },
+      { userName: 'Tunde A.', date: 'Jun 28, 2026', comment: 'Gorgeous piece, though the cushions are firmer than I expected. Still very happy with it.', stars: starRow(4) },
+      { userName: 'Chioma N.', date: 'Jun 3, 2026', comment: 'Exactly as pictured. Worth every naira.', stars: starRow(5) },
+    ];
+
+    const rawCart = [
+      { id: 1, name: 'Velvet Chesterfield Sofa', price: 2450000, qty: 1 },
+      { id: 4, name: 'Walnut Nightstand Pair', price: 640000, qty: 2 },
+      { id: 6, name: 'Ergonomic Mesh Chair', price: 780000, qty: 1 },
+    ];
+    const cartItems = rawCart.map(c => ({ ...c, priceFmt: fmt(c.price), lineTotalFmt: fmt(c.price * c.qty) }));
+    const cartTotal = rawCart.reduce((sum, c) => sum + c.price * c.qty, 0);
+
+    const wishlistItems = [
+      { id: 1, name: 'Velvet Chesterfield Sofa', price: 2450000 },
+      { id: 2, name: 'Marble-Top Coffee Table', price: 980000 },
+      { id: 3, name: 'Rattan Accent Armchair', price: 560000 },
+      { id: 4, name: 'Solid Oak Wardrobe', price: 4600000 },
+    ].map(p => ({ ...p, priceFmt: fmt(p.price) }));
+
+    const rawOrders = [
+      { id: 'a1b2c3d4e5', date: 'Aug 12, 2026', total: 2450000, status: 'paid' },
+      { id: 'f6g7h8i9j0', date: 'Aug 2, 2026', total: 1420000, status: 'pending' },
+      { id: 'k1l2m3n4o5', date: 'Jul 20, 2026', total: 980000, status: 'failed' },
+      { id: 'p6q7r8s9t0', date: 'Jun 30, 2026', total: 640000, status: 'cancelled' },
+    ];
+    const orderList = rawOrders.map(o => ({ shortId: o.id.slice(0,8), date: o.date, totalFmt: fmt(o.total), statusLabel: STATUS_TAG[o.status].label, tagBg: STATUS_TAG[o.status].bg, tagColor: STATUS_TAG[o.status].color }));
+
+    const blogPosts = [
+      { id: 1, title: 'Choosing the Right Sofa Fabric for Lagos Humidity', date: 'August 3, 2026', excerpt: 'Humidity changes everything about how upholstery ages. Here is what holds up.' },
+      { id: 2, title: 'Oak vs. Walnut: A Buyer\u2019s Guide', date: 'July 18, 2026', excerpt: 'Two classic hardwoods, two very different personalities in the living room.' },
+      { id: 3, title: 'Styling a Small Living Room Without Compromise', date: 'July 2, 2026', excerpt: 'Scale, sightlines, and the pieces worth the square footage.' },
+    ];
+
+    const saleProducts = [
+      { id: 1, name: 'Rattan Accent Armchair', orig: 720000, price: 560000 },
+      { id: 2, name: 'Marble-Top Coffee Table', orig: 1180000, price: 980000 },
+      { id: 3, name: 'Walnut Nightstand Pair', orig: 820000, price: 640000 },
+      { id: 4, name: 'Ergonomic Mesh Chair', orig: 940000, price: 780000 },
+    ].map(p => ({ ...p, origFmt: fmt(p.orig), priceFmt: fmt(p.price) }));
+
+    const adminProducts = [
+      { name: 'Velvet Chesterfield Sofa', price: 2450000, stock: 4, isActive: true },
+      { name: 'Marble-Top Coffee Table', price: 980000, stock: 0, isActive: false },
+      { name: 'Executive Leather Desk', price: 2100000, stock: 7, isActive: true },
+      { name: 'Ergonomic Mesh Chair', price: 780000, stock: 12, isActive: true },
+      { name: 'Solid Oak Wardrobe', price: 4600000, stock: 2, isActive: true },
+    ].map(p => ({ ...p, priceFmt: fmt(p.price), inactiveLabel: p.isActive ? '' : '· Inactive' }));
+
+    const rawAdminOrders = [
+      { id: 'a1b2c3d4e5', email: 'amaka.o@example.com', items: 2, total: 2450000, status: 'paid', date: 'Aug 12, 2026' },
+      { id: 'f6g7h8i9j0', email: 'tunde.a@example.com', items: 1, total: 1420000, status: 'pending', date: 'Aug 2, 2026' },
+      { id: 'k1l2m3n4o5', email: 'chioma.n@example.com', items: 3, total: 980000, status: 'failed', date: 'Jul 20, 2026' },
+      { id: 'p6q7r8s9t0', email: 'segun.b@example.com', items: 1, total: 640000, status: 'paid', date: 'Jun 30, 2026' },
+    ];
+    const adminOrders = rawAdminOrders.map(o => ({
+      shortId: o.id.slice(0,8), email: o.email, itemCount: o.items, totalFmt: fmt(o.total),
+      statusLabel: STATUS_TAG[o.status].label, tagBg: STATUS_TAG[o.status].bg, tagColor: STATUS_TAG[o.status].color,
+    }));
+
+    const categoryList = [
+      { name: 'Living Room' }, { name: 'Bedroom' }, { name: 'Office' }, { name: 'Dining' }, { name: 'Outdoor' }, { name: 'Lighting' },
+    ];
+
+    const ADMIN_SCREENS = { dashboard: 'admin', products: 'adminProducts', categories: 'adminCategories', orders: 'adminOrders' };
+
+    const showEmpty = this.props.demoEmptyStates ?? false;
+
+    return {
+      hasWishlist: !showEmpty, hasNoWishlist: showEmpty,
+      hasOrders: !showEmpty, hasNoOrders: showEmpty,
+      hasAdminProducts: !showEmpty, hasNoAdminProducts: showEmpty,
+      hasAdminOrders: !showEmpty, hasNoAdminOrders: showEmpty,
+      isHome: screen === 'home', isProduct: screen === 'product', isCart: screen === 'cart', isCheckout: screen === 'checkout',
+      isLogin: screen === 'login', isSignup: screen === 'signup', isWishlist: screen === 'wishlist', isOrders: screen === 'orders',
+      isAccount: screen === 'account', isBlog: screen === 'blog', isBlogPost: screen === 'blogPost', isSale: screen === 'sale',
+      isAdmin: screen === 'admin', isAdminProducts: screen === 'adminProducts', isAdminOrders: screen === 'adminOrders', isAdminCategories: screen === 'adminCategories',
+      goHome: go('home'), goProduct: go('product'), goCart: go('cart'), goCheckout: go('checkout'), goLogin: go('login'), goSignup: go('signup'),
+      goWishlist: go('wishlist'), goOrders: go('orders'), goAccount: go('account'), goBlog: go('blog'), goBlogPost: go('blogPost'), goSale: go('sale'),
+      goAdmin: go('admin'), goAdminProducts: go('adminProducts'), goAdminOrders: go('adminOrders'), goAdminCategories: go('adminCategories'),
+      setAdminScreen: (key) => this.setState({ screen: ADMIN_SCREENS[key] || 'admin' }),
+      scrollToProducts: () => document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' }),
+      addToCart: (e) => { e.stopPropagation(); this.setState(s => ({ cartCount: s.cartCount + 1 })); },
+      addToCartFromProduct: () => this.setState(s => ({ cartCount: s.cartCount + 1 }), () => go('cart')()),
+      completeOrder: go('orders'),
+      cartCount: this.state.cartCount,
+      categoryPills, products, pdStars: starRow(5), reviews, cartItems, cartTotalFmt: fmt(cartTotal),
+      wishlistItems, orderList, blogPosts, saleProducts, adminProducts, adminOrders, categoryList,
+    };
+  }
+}
+</script>
+</body>
+</html>

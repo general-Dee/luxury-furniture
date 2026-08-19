@@ -16,22 +16,22 @@ export default function CartPage() {
   useEffect(() => setMounted(true), [])
 
   if (!mounted) {
-    return <div className="container-luxury py-20 text-center">Loading cart...</div>
+    return <div className="ind-scope max-w-7xl mx-auto px-6 py-20 text-center">Loading cart...</div>
   }
 
   if (items.length === 0) {
     return (
-      <div className="container-luxury py-20 text-center">
-        <h2 className="text-2xl font-serif mb-4">Your cart is empty</h2>
-        <p className="text-gray-600 mb-6">Add some luxury furniture to get started.</p>
-        <Link href="/" className="btn-primary inline-block">Continue Shopping</Link>
+      <div className="ind-scope max-w-7xl mx-auto px-6 py-20 text-center">
+        <h2 className="text-2xl mb-4">Your cart is empty</h2>
+        <p className="opacity-70 mb-6">Add some luxury furniture to get started.</p>
+        <Link href="/" className="ind-btn ind-btn-primary inline-block">Continue shopping</Link>
       </div>
     )
   }
 
   return (
-    <main className="container-luxury py-12">
-      <h1 className="text-3xl font-serif mb-8">Shopping Cart</h1>
+    <main className="ind-scope max-w-7xl mx-auto px-6 py-12">
+      <h1 className="uppercase text-3xl mb-8">Shopping cart</h1>
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
           <AnimatePresence>
@@ -41,9 +41,13 @@ export default function CartPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                className="flex gap-6 bg-white p-5 rounded-xl shadow-sm border border-gray-100"
+                className="ind-card ind-blueprint relative flex flex-row items-center gap-6"
               >
-                <div className="relative w-28 h-28 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                <i className="ind-corner tl" />
+                <i className="ind-corner tr" />
+                <i className="ind-corner bl" />
+                <i className="ind-corner br" />
+                <div className="ind-duotone relative w-24 h-24 flex-shrink-0 border border-[var(--ind-color-divider)]">
                   <Image
                     src={item.image || '/placeholder.jpg'}
                     alt={item.name}
@@ -52,62 +56,71 @@ export default function CartPage() {
                   />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-serif text-lg">{item.name}</h3>
-                  <p className="text-luxury-gold font-semibold mt-1">₦{item.price.toLocaleString()}</p>
-                  <div className="flex items-center gap-3 mt-3">
+                  <h3 className="ind-card-title">{item.name}</h3>
+                  <p className="mt-1 text-[var(--ind-color-accent-700)]" style={{ fontFamily: 'var(--ind-font-heading)', fontWeight: 600 }}>
+                    ₦{item.price.toLocaleString()}
+                  </p>
+                  <div className="flex items-center gap-2 mt-3">
                     <button
                       onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
-                      className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-gray-100"
+                      className="ind-btn ind-btn-secondary ind-btn-icon"
                     >
-                      -
+                      –
                     </button>
-                    <span className="w-8 text-center">{item.quantity}</span>
+                    <span className="w-7 text-center text-sm">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
-                      className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-gray-100"
+                      className="ind-btn ind-btn-secondary ind-btn-icon"
                     >
                       +
                     </button>
                     <button
                       onClick={() => removeItem(item.product_id)}
-                      className="ml-4 text-gray-400 hover:text-red-500 text-sm transition"
+                      className="ind-btn ind-btn-ghost ml-3"
                     >
                       Remove
                     </button>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-lg">₦{(item.price * item.quantity).toLocaleString()}</p>
+                  <p className="font-semibold text-lg">₦{(item.price * item.quantity).toLocaleString()}</p>
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 h-fit sticky top-24">
-          <h2 className="text-xl font-serif mb-4">Order Summary</h2>
-          <div className="space-y-3 border-b pb-4">
+        <div className="ind-card ind-blueprint relative h-fit sticky top-24">
+          <i className="ind-corner tl" />
+          <i className="ind-corner tr" />
+          <i className="ind-corner bl" />
+          <i className="ind-corner br" />
+          <h2 className="text-xl mb-2">Order summary</h2>
+          <div className="space-y-3 border-b border-[var(--ind-color-divider)] pb-4">
             <div className="flex justify-between">
               <span>Subtotal</span>
               <span>₦{totalPrice.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between text-sm text-gray-500">
+            <div className="flex justify-between text-sm opacity-60">
               <span>Shipping</span>
               <span>Calculated at checkout</span>
             </div>
           </div>
-          <div className="flex justify-between font-bold text-xl mt-4">
+          <div className="flex justify-between font-semibold text-xl mt-4">
             <span>Total</span>
             <span>₦{totalPrice.toLocaleString()}</span>
           </div>
-          <Link href="/checkout" className="btn-primary w-full text-center mt-6 block">
-            Proceed to Checkout
+          <Link href="/checkout" className="ind-btn ind-btn-primary ind-btn-block text-center mt-6">
+            Proceed to checkout
+          </Link>
+          <Link href="/" className="ind-btn ind-btn-ghost ind-btn-block text-center mt-2">
+            Continue shopping
           </Link>
           <button
             onClick={clearCart}
-            className="w-full text-center text-sm text-gray-400 hover:text-red-500 mt-4 transition"
+            className="w-full text-center text-sm opacity-50 hover:opacity-100 mt-4 transition"
           >
-            Clear Cart
+            Clear cart
           </button>
         </div>
       </div>

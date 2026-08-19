@@ -15,7 +15,7 @@ export default function DeleteReviewButton({ id }: { id: string }) {
   }
 
   return (
-    <button onClick={handleDelete} className="text-red-600">
+    <button onClick={handleDelete} className="ind-btn ind-btn-ghost !text-red-600">
       Delete
     </button>
   )

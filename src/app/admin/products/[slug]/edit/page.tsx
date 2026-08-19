@@ -10,7 +10,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ sl
 
   return (
     <div>
-      <h2 className="text-xl font-serif mb-6">Edit Product</h2>
+      <h2 className="ind-scope uppercase text-xl mb-6">Edit product</h2>
       <ProductForm
         mode="edit"
         slug={slug}

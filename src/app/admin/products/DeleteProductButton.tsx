@@ -15,7 +15,7 @@ export default function DeleteProductButton({ slug }: { slug: string }) {
   }
 
   return (
-    <button onClick={handleDelete} className="text-red-600">
+    <button onClick={handleDelete} className="ind-btn ind-btn-ghost !text-red-600 ml-3">
       Delete
     </button>
   )

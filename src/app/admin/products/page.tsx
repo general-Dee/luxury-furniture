@@ -18,29 +18,47 @@ export default async function AdminProductsPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-serif">Products</h2>
-        <Link href="/admin/products/new" className="bg-luxury-charcoal text-white px-4 py-2 rounded text-sm">
-          + New Product
+        <h2 className="uppercase text-xl m-0">Products</h2>
+        <Link href="/admin/products/new" className="ind-btn ind-btn-primary">
+          + New product
         </Link>
       </div>
-      <div className="border rounded-lg divide-y">
-        {products.map((product) => (
-          <div key={product.slug} className="flex items-center justify-between px-4 py-3">
-            <div>
-              <p className="font-medium">{product.name}</p>
-              <p className="text-sm text-gray-500">
-                ₦{product.price.toLocaleString()} · Stock: {product.stock}
-                {!product.isActive && <span className="text-red-500"> · Inactive</span>}
-              </p>
-            </div>
-            <div className="flex gap-3 text-sm">
-              <Link href={`/admin/products/${product.slug}/edit`} className="text-luxury-gold">Edit</Link>
-              <DeleteProductButton slug={product.slug} />
-            </div>
-          </div>
-        ))}
-        {products.length === 0 && <p className="px-4 py-6 text-gray-500 text-sm">No products yet.</p>}
-      </div>
+      {products.length === 0 ? (
+        <div className="ind-plate relative text-center p-6">
+          <i className="ind-corner ind-plate-corner tl" />
+          <i className="ind-corner ind-plate-corner tr" />
+          <i className="ind-corner ind-plate-corner bl" />
+          <i className="ind-corner ind-plate-corner br" />
+          <p className="opacity-60">No products yet.</p>
+        </div>
+      ) : (
+        <table className="ind-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.slug}>
+                <td>{product.name}</td>
+                <td>
+                  ₦{product.price.toLocaleString()}
+                  {!product.isActive && <span className="text-[var(--ind-color-accent-700)]"> · Inactive</span>}
+                </td>
+                <td>{product.stock}</td>
+                <td className="text-right">
+                  <Link href={`/admin/products/${product.slug}/edit`} className="text-[var(--ind-color-accent)] hover:underline">Edit</Link>
+                  <DeleteProductButton slug={product.slug} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }

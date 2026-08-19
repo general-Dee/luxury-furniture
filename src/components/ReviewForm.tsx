@@ -1,9 +1,10 @@
 'use client'
 import { useState } from 'react'
-import { Star, X, Upload } from 'lucide-react'
+import { X, Upload } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { uploadToCloudinary } from '@/lib/cloudinary-upload'
+import StarRating from './StarRating'
 
 interface ReviewFormProps {
   productId: string
@@ -69,53 +70,51 @@ export default function ReviewForm({ productId, onReviewSubmitted }: ReviewFormP
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 border-t pt-6 mt-6">
-      <h3 className="text-xl font-serif">Write a Review</h3>
-      <div className="flex gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button key={star} type="button" onClick={() => setRating(star)} className="focus:outline-none">
-            <Star className={`w-6 h-6 ${star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
-          </button>
-        ))}
+    <form onSubmit={handleSubmit} className="ind-scope space-y-4 border-t border-[var(--ind-color-divider)] pt-6 mt-6">
+      <h3 className="text-xl">Write a review</h3>
+      <StarRating rating={rating} size={24} interactive onRate={setRating} />
+      <div className="ind-field">
+        <label>Review title (optional)</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="ind-input"
+        />
       </div>
-      <input
-        type="text"
-        placeholder="Review title (optional)"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="w-full border rounded-md px-3 py-2"
-      />
-      <textarea
-        placeholder="Your review"
-        rows={4}
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        required
-        className="w-full border rounded-md px-3 py-2"
-      />
+      <div className="ind-field">
+        <label>Your review</label>
+        <textarea
+          rows={4}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          required
+          className="ind-input"
+        />
+      </div>
       <div>
-        <label className="block text-sm font-medium mb-1">Images (optional, max 3)</label>
+        <label className="block text-xs opacity-70 mb-2">Images (optional, max 3)</label>
         <div className="flex flex-wrap gap-2 mb-2">
           {images.map((url, idx) => (
-            <div key={idx} className="relative w-16 h-16 rounded border overflow-hidden">
+            <div key={idx} className="relative w-16 h-16 border border-[var(--ind-color-divider)] overflow-hidden">
               <Image src={url} alt="Review" fill className="object-cover" />
-              <button type="button" onClick={() => removeImage(idx)} className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5">
+              <button type="button" onClick={() => removeImage(idx)} className="absolute top-0 right-0 bg-red-500 text-white p-0.5">
                 <X className="w-3 h-3" />
               </button>
             </div>
           ))}
-          <label className="flex flex-col items-center justify-center w-16 h-16 border-2 border-dashed rounded cursor-pointer hover:bg-gray-50">
+          <label className="flex flex-col items-center justify-center w-16 h-16 border border-dashed border-[var(--ind-color-divider)] cursor-pointer hover:bg-[var(--ind-color-surface)]">
             {uploading ? (
-              <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-[var(--ind-color-divider)] border-t-transparent rounded-full animate-spin" />
             ) : (
-              <Upload className="w-5 h-5 text-gray-400" />
+              <Upload className="w-5 h-5 opacity-50" />
             )}
             <input type="file" multiple accept="image/*" onChange={handleImageUpload} disabled={uploading} className="hidden" />
           </label>
         </div>
       </div>
-      <button type="submit" disabled={loading} className="btn-primary">
-        {loading ? 'Submitting...' : 'Submit Review'}
+      <button type="submit" disabled={loading} className="ind-btn ind-btn-primary">
+        {loading ? 'Submitting...' : 'Submit review'}
       </button>
     </form>
   )

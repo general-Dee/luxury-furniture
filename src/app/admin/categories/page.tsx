@@ -7,7 +7,7 @@ export default async function AdminCategoriesPage() {
 
   return (
     <div>
-      <h2 className="text-xl font-serif mb-6">Categories</h2>
+      <h2 className="ind-scope uppercase text-xl mb-6">Categories</h2>
       <CategoryManager initialCategories={categories} />
     </div>
   )
