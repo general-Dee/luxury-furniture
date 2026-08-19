@@ -33,4 +33,10 @@ export async function deleteCloudinaryImage(publicId: string) {
   await cloudinary.uploader.destroy(publicId)
 }
 
+/** Extracts the public ID from a Cloudinary secure_url, e.g. for cleanup on delete. */
+export function extractCloudinaryPublicId(url: string): string | null {
+  const match = url.match(/\/upload\/v\d+\/(.+)\.\w+$/)
+  return match ? match[1] : null
+}
+
 export default cloudinary
