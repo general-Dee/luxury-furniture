@@ -18,10 +18,10 @@ export default async function AdminDashboard() {
         <p className="text-3xl font-serif">{categoriesCount}</p>
         <p className="text-gray-500 text-sm mt-1">Categories</p>
       </Link>
-      <div className="border rounded-lg p-6">
+      <Link href="/admin/orders?status=pending" className="border rounded-lg p-6 hover:shadow-md transition">
         <p className="text-3xl font-serif">{pendingOrdersCount}</p>
         <p className="text-gray-500 text-sm mt-1">Pending Orders</p>
-      </div>
+      </Link>
     </div>
   )
 }

@@ -34,6 +34,8 @@ export type OrderItem = {
 
 export type OrderStatus = 'pending' | 'paid' | 'failed' | 'cancelled'
 
+export type FulfillmentStatus = 'unfulfilled' | 'shipped' | 'delivered'
+
 export type Order = {
   userId: string
   email: string
@@ -44,6 +46,7 @@ export type Order = {
   items: OrderItem[]
   totalAmount: number
   status: OrderStatus
+  fulfillmentStatus: FulfillmentStatus
   paystackReference: string | null
   paystackAccessCode: string | null
   createdAt: Timestamp

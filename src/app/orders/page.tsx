@@ -4,6 +4,13 @@ import { adminDb } from '@/lib/firebase/admin'
 
 export const dynamic = 'force-dynamic'
 
+const STATUS_COLOR: Record<string, string> = {
+  pending: 'text-yellow-600',
+  paid: 'text-green-600',
+  failed: 'text-red-600',
+  cancelled: 'text-gray-500',
+}
+
 export default async function OrdersPage() {
   const user = await getServerUser()
   if (!user) redirect('/login')
@@ -39,7 +46,7 @@ export default async function OrdersPage() {
               </div>
               <div className="text-right">
                 <p className="font-bold">₦{order.totalAmount.toLocaleString()}</p>
-                <p className={`text-sm ${order.status === 'paid' ? 'text-green-600' : 'text-yellow-600'}`}>
+                <p className={`text-sm ${STATUS_COLOR[order.status] ?? 'text-gray-500'}`}>
                   {order.status.toUpperCase()}
                 </p>
               </div>
